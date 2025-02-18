@@ -1,21 +1,27 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
 
 const api = require('./api');
 
 const app = express();
-const port = 8000;
+const port = 8000;  // Port fixé
 
-app.use(cors()); //autorise le CORS
+// Connexion à MongoDB avec une valeur par défaut
+const mongoURI = 'mongodb://admin:password@localhost:27017/pixelboard?authSource=admin';
+
+mongoose.connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => console.log('✅ MongoDB connecté en local'))
+.catch(err => console.error('❌ Erreur de connexion MongoDB :', err));
+
+app.use(cors());
 app.use(express.json());
-
-app.get('/', (req, res) => { // GET SUR localhost:8000/
-	res.json('Hello World!');
-});
 
 app.use('/api', api);
 
 app.listen(port, () => {
-	// eslint-disable-next-line no-console
-	console.log(`Server listening on ${port}`);
+    console.log(`🚀 Serveur en ligne sur http://localhost:${port}`);
 });

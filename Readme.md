@@ -45,3 +45,15 @@ For example to add a librairy for devDependencies to the client package you can 
 ``` js
 yarn workspace client add -D <package-name>
 ```
+
+Nos étapes
+
+1. docker 
+``` js
+docker-compose up -d
+```
+2. add url dans mongo compass
+
+``` js
+mongodb://admin:password@localhost:27017/pixelboard?authSource=admin
+```
