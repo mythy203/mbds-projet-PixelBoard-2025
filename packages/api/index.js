@@ -1,13 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const api = require('./api');
+const authRoutes = require('./routes/auth');
+const authMiddleware = require('./middleware/auth');
 
 const app = express();
-const port = 8000;  // Port fixé
+const port = 8000;
 
-// Connexion à MongoDB avec une valeur par défaut
 const mongoURI = 'mongodb://admin:password@localhost:27017/pixelboard?authSource=admin';
 
 mongoose.connect(mongoURI, {
@@ -19,8 +21,10 @@ mongoose.connect(mongoURI, {
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
-app.use('/api', api);
+app.use('/api/auth', authRoutes);
+app.use('/api', authMiddleware, api);
 
 app.listen(port, () => {
     console.log(`🚀 Serveur en ligne sur http://localhost:${port}`);
