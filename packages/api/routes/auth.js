@@ -1,16 +1,16 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const User = require('../models/user'); // Assurez-vous de créer un modèle User
+const User = require('../models/users'); // Assurez-vous de créer un modèle User
 
 const router = express.Router();
 const secret = 'your_jwt_secret'; // Remplacez par une clé secrète sécurisée
 
 // Route de création de compte
 router.post('/signup', async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, role } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ username, password: hashedPassword });
+    const user = new User({ username, password: hashedPassword, role : role || 'user' });
     await user.save();
     res.status(201).json({ message: 'User created' });
 });
