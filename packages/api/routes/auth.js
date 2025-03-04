@@ -9,8 +9,12 @@ const secret = 'your_jwt_secret'; // Remplacez par une clé secrète sécurisée
 // Route de création de compte
 router.post('/signup', async (req, res) => {
     const { username, password, role } = req.body;
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+        return res.status(409).json({ message: 'User already exists' });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ username, password: hashedPassword, role : role || 'user' });
+    const user = new User({ username, password: hashedPassword, role: role || 'user' });
     await user.save();
     res.status(201).json({ message: 'User created' });
 });
@@ -25,6 +29,26 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ userId: user._id }, secret, { expiresIn: '1h' });
     res.cookie('token', token, { httpOnly: true, secure: true });
     res.json({ message: 'Logged in' });
+});
+
+router.post('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.json({ message: 'Logged out' });
+});
+
+// Route pour récupérer les informations de l'utilisateur connecté
+router.get('/me', async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        const decoded = jwt.verify(token, secret);
+        const user = await User.findById(decoded.userId).select('username');
+        res.json(user);
+    } catch (err) {
+        res.status(401).json({ message: 'Invalid token' });
+    }
 });
 
 module.exports = router;
