@@ -39,6 +39,7 @@ const HomePage = () => {
                 <button onClick={() => navigate('/login')}>Login</button>
                 <button onClick={() => navigate('/register')}>Register</button>
                 <button onClick={handleLogout}>Logout</button>
+                <button onClick={() => navigate('/create-pixelboard')}>Créer un PixelBoard</button>
             </header>
         </div>
     );

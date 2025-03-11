@@ -4,7 +4,19 @@ const Pixel = require('../models/pixel');
 
 const router = express.Router();
 
-//Récupérer tous les pixels d'un PixelBoard
+// Ajouter un pixel à un PixelBoard
+router.post('/add', async (req, res) => {
+    try {
+        const { boardId, x, y, color, userId } = req.body;
+        const newPixel = new Pixel({ boardId, x, y, color, userId });
+        await newPixel.save();
+        res.status(201).json(newPixel);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+//  Récupérer tous les pixels d'un PixelBoard
 router.get('/:boardId', async (req, res) => {
     try {
         const { boardId } = req.params;
@@ -15,7 +27,7 @@ router.get('/:boardId', async (req, res) => {
     }
 });
 
-// Ajouter un pixel avec vérification du délai
+//  Ajouter un pixel avec vérification du délai
 router.post('/', async (req, res) => {
     try {
         const { boardId, x, y, color, userId } = req.body;
