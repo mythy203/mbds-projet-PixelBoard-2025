@@ -1,4 +1,3 @@
-// filepath: c:\Users\test\Documents\GitHub\mbds-projet-PixelBoard-2025\packages\client\src\components\TitleOverlay.jsx
 import React from "react";
 
 const TitleOverlay = ({ title }) => {

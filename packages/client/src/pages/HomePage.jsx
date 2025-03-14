@@ -1,4 +1,3 @@
-// filepath: c:\Users\test\Documents\GitHub\mbds-projet-PixelBoard-2025\packages\client\src\pages\HomePage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import { getPixelBoardsCount, getUserInfo } from "../services/api";
