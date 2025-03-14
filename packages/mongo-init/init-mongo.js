@@ -4,21 +4,27 @@ print("🚀 Initialisation de MongoDB avec des données de test...");
 db = db.getSiblingDB("pixelboard");
 
 // Création de la collection `pixelboards` avec un exemple
+const boardId = ObjectId();
 db.pixelboards.insertOne({
-    title: "Pixel War",
+    _id: boardId,
+    title: "Pixel War2025",
     status: "en cours",
     createdAt: new Date(),
     endAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 jours plus tard
-    size: 100,
+    size: 10,
     mode: "restricted",
     delayBetweenActions: 10
 });
 
-// Création de la collection `pixels` avec des pixels d'exemple
-db.pixels.insertMany([
-    { boardId: ObjectId(), x: 10, y: 20, color: "#FF5733", createdAt: new Date() },
-    { boardId: ObjectId(), x: 30, y: 40, color: "#33FF57", createdAt: new Date() },
-    { boardId: ObjectId(), x: 50, y: 60, color: "#3357FF", createdAt: new Date() }
-]);
+// Création de la collection `pixels` avec des pixels d'exemple pour créer un motif en damier
+const pixels = [];
+const colors = ["#FF5733", "#33FF57", "#3357FF"];
+for (let x = 0; x < 10; x++) {
+    for (let y = 0; y < 10; y++) {
+        const color = colors[(x + y) % colors.length];
+        pixels.push({ boardId: boardId, x: x, y: y, color: color, createdAt: new Date() });
+    }
+}
+db.pixels.insertMany(pixels);
 
 print("✅ MongoDB est prêt avec des données de test !");
