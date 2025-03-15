@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
-app.use('/api', authMiddleware, api);
+app.use('/api', api);
 
 app.listen(port, () => {
     console.log(`🚀 Serveur en ligne sur http://localhost:${port}`);
