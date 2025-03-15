@@ -19,7 +19,11 @@ mongoose.connect(mongoURI, {
 .then(() => console.log('✅ MongoDB connecté en local'))
 .catch(err => console.error('❌ Erreur de connexion MongoDB :', err));
 
-app.use(cors());
+app.use(cors({
+	origin: 'http://localhost:5173',
+	credentials: true
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 
