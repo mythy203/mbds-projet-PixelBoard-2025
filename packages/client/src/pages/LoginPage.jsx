@@ -11,7 +11,7 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8000/api/auth/login', { username, password });
+            const response = await axios.post('http://localhost:8000/api/auth/login', { username, password }, { withCredentials: true });
             if (response.data.message === 'Logged in') {
                 navigate('/');
             }
