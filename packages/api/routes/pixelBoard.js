@@ -26,9 +26,13 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Créer un nouveau PixelBoard
+// Créer un nouveau PixelBoard (admin uniquement)
 router.post('/', authMiddleware, async (req, res) => {
     try {
+        if (req.userRole !== 'admin') {
+            return res.status(403).json({ message: 'Seuls les administrateurs peuvent créer un PixelBoard.' });
+        }
+
         const { title, size, mode, delayBetweenPixels, endTime } = req.body;
         const newBoard = new PixelBoard({
             title,
@@ -36,7 +40,7 @@ router.post('/', authMiddleware, async (req, res) => {
             mode,
             delayBetweenPixels,
             endTime,
-            createdBy: req.userId // Utiliser l'ID de l'utilisateur authentifié
+            createdBy: req.userId
         });
         await newBoard.save();
         res.status(201).json(newBoard);
@@ -44,6 +48,7 @@ router.post('/', authMiddleware, async (req, res) => {
         res.status(400).json({ message: 'Erreur lors de la création du PixelBoard', error });
     }
 });
+
 
 // Mettre à jour un PixelBoard par ID
 router.put('/:id', authMiddleware, async (req, res) => {

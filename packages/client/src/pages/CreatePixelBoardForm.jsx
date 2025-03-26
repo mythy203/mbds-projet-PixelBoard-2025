@@ -28,7 +28,7 @@ const CreatePixelBoardForm = () => {
           endTime,
         },
         {
-          withCredentials: true,
+          withCredentials: true, // Pour envoyer le cookie JWT
         }
       );
 
@@ -36,22 +36,27 @@ const CreatePixelBoardForm = () => {
       console.log(res.data);
     } catch (error) {
       console.error(error);
-      setMessage({ type: 'error', text: 'Erreur lors de la création.' });
+      const errorMsg = error.response?.data?.message || 'Erreur lors de la création.';
+      setMessage({ type: 'error', text: errorMsg });
     }
   };
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-2xl shadow-md">
       <h2 className="text-xl font-bold mb-4">Créer un PixelBoard</h2>
+
       {message && (
         <div
           className={`mb-4 p-2 rounded ${
-            message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            message.type === 'success'
+              ? 'bg-green-100 text-green-700'
+              : 'bg-red-100 text-red-700'
           }`}
         >
           {message.text}
         </div>
       )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block font-medium">Titre</label>
@@ -63,6 +68,7 @@ const CreatePixelBoardForm = () => {
             required
           />
         </div>
+
         <div>
           <label className="block font-medium">Taille (grille)</label>
           <input
@@ -75,6 +81,7 @@ const CreatePixelBoardForm = () => {
             max={200}
           />
         </div>
+
         <div>
           <label className="block font-medium">Mode</label>
           <select
@@ -86,6 +93,7 @@ const CreatePixelBoardForm = () => {
             <option value="false">Interdire modification</option>
           </select>
         </div>
+
         <div>
           <label className="block font-medium">Délai entre pixels (sec)</label>
           <input
@@ -97,8 +105,9 @@ const CreatePixelBoardForm = () => {
             max={3600}
           />
         </div>
+
         <div>
-          <label className="block font-medium">Date de fin <span className="text-red-600"></span></label>
+          <label className="block font-medium">Date de fin</label>
           <input
             type="datetime-local"
             className="w-full border rounded p-2"
@@ -107,6 +116,7 @@ const CreatePixelBoardForm = () => {
             required
           />
         </div>
+
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
