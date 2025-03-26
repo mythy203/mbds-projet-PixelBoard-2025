@@ -12,8 +12,12 @@ const CreatePixelBoardForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!endTime) {
+      setMessage({ type: 'error', text: 'La date de fin est obligatoire.' });
+      return;
+    }
+
     try {
-      const token = localStorage.getItem('token');
       const res = await axios.post(
         'http://localhost:8000/api/pixelboards',
         {
@@ -21,13 +25,12 @@ const CreatePixelBoardForm = () => {
           size,
           mode,
           delayBetweenPixels,
-          endTime: endTime || null,
+          endTime,
         },
         {
-          withCredentials: true, // 🔥 Permet d’envoyer le cookie JWT httpOnly
+          withCredentials: true,
         }
       );
-      
 
       setMessage({ type: 'success', text: 'PixelBoard créé avec succès !' });
       console.log(res.data);
@@ -95,12 +98,13 @@ const CreatePixelBoardForm = () => {
           />
         </div>
         <div>
-          <label className="block font-medium">Date de fin (optionnel)</label>
+          <label className="block font-medium">Date de fin <span className="text-red-600"></span></label>
           <input
             type="datetime-local"
             className="w-full border rounded p-2"
             value={endTime}
             onChange={(e) => setEndTime(e.target.value)}
+            required
           />
         </div>
         <button
