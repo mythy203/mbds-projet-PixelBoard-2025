@@ -28,6 +28,9 @@ const LoginPage = () => {
 
   return (
     <div className={styles.page}>
+      <video autoPlay muted loop className={styles.videoBg}>
+        <source src="/background-signup-login.mp4" type="video/mp4" />
+      </video>
       <div className={styles.container}>
         <h2 className={styles.title}>Se connecter</h2>
         <form onSubmit={handleSubmit} className={styles.form}>
@@ -54,7 +57,14 @@ const LoginPage = () => {
           <button type="submit" className={styles.button}>
             Connexion
           </button>
-          
+          <p className={styles.switch}>
+            Pas encore inscrit ?{" "}
+            <a href="/register" className={styles.link}>
+              Inscription
+            </a>
+          </p>
+
+
         </form>
       </div>
     </div>
