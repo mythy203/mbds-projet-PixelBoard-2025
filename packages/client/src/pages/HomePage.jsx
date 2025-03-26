@@ -27,12 +27,14 @@ const HomePage = () => {
 
     const handleLogout = async () => {
         try {
-            await axios.post('http://localhost:8000/api/auth/logout');
-            navigate('/login');
+            await axios.post('http://localhost:8000/api/auth/logout', {}, {
+                withCredentials: true
+            });
+            setUser(null); // 🔥 Réinitialise l'utilisateur connecté
         } catch (err) {
             console.error('Error logging out', err);
         }
-    };
+    };    
 
     return (
         <div className="App">
