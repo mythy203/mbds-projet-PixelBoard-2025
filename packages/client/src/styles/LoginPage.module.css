@@ -1,5 +1,4 @@
 .page {
-    background-image: url('/backgroup-signup-login.gif');
     background-size: cover;
     background-position: center;
     min-height: 100vh;
@@ -58,5 +57,51 @@
   .error {
     color: red;
     font-size: 0.9rem;
+  }
+  .videoBg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .switch {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #333;
+  }
+  
+  .link {
+    color: #3366ff;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .link:hover {
+    text-decoration: underline;
+  }
+  
+  
+  @media (max-width: 480px) {
+    .container {
+      padding: 1.5rem;
+      max-width: 95%;
+    }
+  
+    .title {
+      font-size: 1.3rem;
+    }
+  
+    .form {
+      gap: 1rem;
+    }
+  
+    .button {
+      padding: 0.5rem 1rem;
+      font-size: 0.95rem;
+    }
   }
   

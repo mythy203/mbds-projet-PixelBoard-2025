@@ -1,5 +1,4 @@
 .page {
-    background-image: url('/backgroup-signup-login.gif');
     background-size: cover;
     background-position: center;
     min-height: 100vh;
@@ -59,6 +58,17 @@
     color: red;
     font-size: 0.9rem;
   }
+  .videoBg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    pointer-events: none;
+  }
+  
   
   /* Radio role section */
   .role-group {
