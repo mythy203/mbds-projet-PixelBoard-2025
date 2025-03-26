@@ -1,4 +1,3 @@
-// filepath: c:\Users\test\Documents\GitHub\mbds-projet-PixelBoard-2025\packages\api\routes\pixelBoard.js
 const express = require('express');
 const PixelBoard = require('../models/pixelBoard');
 const authMiddleware = require('../middleware/auth');
