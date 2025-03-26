@@ -32,9 +32,14 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/logout', (req, res) => {
-    res.clearCookie('token');
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: true, // mettre false en local sans HTTPS
+        sameSite: 'Lax'
+    });
     res.json({ message: 'Logged out' });
 });
+
 
 // Route pour récupérer les informations de l'utilisateur connecté
 router.get('/me', async (req, res) => {
