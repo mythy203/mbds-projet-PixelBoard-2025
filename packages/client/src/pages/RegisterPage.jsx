@@ -86,6 +86,13 @@ const RegisterPage = () => {
           <button type="submit" className={styles.button}>
             Créer un compte
           </button>
+          <p className={styles.switch}>
+            Déjà inscrit ?{" "}
+            <a href="/login" className={styles.link}>
+                Se connecter
+            </a>
+            </p>
+
         </form>
       </div>
     </div>

@@ -95,6 +95,22 @@
     width: 16px;
     height: 16px;
   }
+  .switch {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #333;
+  }
+  
+  .link {
+    color: #3366ff;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .link:hover {
+    text-decoration: underline;
+  }
+  
   
   /* Responsive */
   @media (max-width: 480px) {
