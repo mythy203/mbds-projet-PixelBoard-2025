@@ -39,8 +39,7 @@
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease;
-  text-decoration: none;
-  color: inherit;
+  position: relative; /* pour positionner le bouton */
 }
 
 .card:hover {
@@ -53,7 +52,13 @@
   font-size: 1.2rem;
 }
 
-/* Bouton créer */
+.cardContent {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* Bouton de création */
 .adminActions {
   display: flex;
   justify-content: flex-end;
@@ -73,4 +78,23 @@
 
 .createButton:hover {
   background-color: #43a047;
+}
+
+/* Bouton Supprimer */
+.deleteButton {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background-color: transparent;
+  color: #d32f2f;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.deleteButton:hover {
+  background-color: rgba(211, 47, 47, 0.1);
 }

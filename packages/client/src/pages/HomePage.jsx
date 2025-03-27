@@ -5,12 +5,14 @@ import axios from "axios";
 import styles from "../styles/HomePage.module.css";
 import Header from "../components/Header";
 import CreatePixelBoardForm from "../components/CreatePixelBoardForm";
+import ConfirmDialog from "../components/ConfirmDialog";
 import { getUserInfo } from "../services/api";
 
 const HomePage = () => {
   const [user, setUser] = useState(null);
   const [pixelBoards, setPixelBoards] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   const fetchBoards = async () => {
     const response = await axios.get("http://localhost:8000/api/pixelboards");
@@ -41,11 +43,22 @@ const HomePage = () => {
   const renderBoards = (boards) => (
     <div className={styles.grid}>
       {boards.map(board => (
-        <Link to={`/pixelboard/${board._id}`} key={board._id} className={styles.card}>
-          <h4>{board.title}</h4>
-          <p>Status : <strong>{board.status}</strong></p>
-          <p>Dimensions : {board.size?.width} x {board.size?.height}</p>
-        </Link>
+        <div key={board._id} className={styles.card}>
+          {user?.role === 'admin' && (
+            <button
+              className={styles.deleteButton}
+              title="Supprimer ce PixelBoard"
+              onClick={() => setConfirmDelete(board)}
+            >
+              🗑️
+            </button>
+          )}
+          <Link to={`/pixelboard/${board._id}`} className={styles.cardContent}>
+            <h4>{board.title}</h4>
+            <p>Status : <strong>{board.status}</strong></p>
+            <p>Dimensions : {board.size} x {board.size}</p>
+          </Link>
+        </div>
       ))}
     </div>
   );
@@ -87,6 +100,25 @@ const HomePage = () => {
           <h3>🔒 PixelBoards terminés</h3>
           {boardsTermines.length > 0 ? renderBoards(boardsTermines) : <p>Aucun PixelBoard terminé.</p>}
         </section>
+
+        {confirmDelete && (
+          <ConfirmDialog
+            message={`Supprimer le PixelBoard "${confirmDelete.title}" ?`}
+            onConfirm={async () => {
+              try {
+                await axios.delete(`http://localhost:8000/api/pixelboards/${confirmDelete._id}`, {
+                  withCredentials: true,
+                });
+                await fetchBoards();
+                setConfirmDelete(null);
+              } catch (err) {
+                console.error("Erreur lors de la suppression :", err);
+                setConfirmDelete(null);
+              }
+            }}
+            onCancel={() => setConfirmDelete(null)}
+          />
+        )}
       </main>
     </div>
   );
