@@ -1,48 +1,54 @@
 .page {
+  background-color: #f9f9f9;
   min-height: 100vh;
-  background-color: var(--bg-color);
-  font-family: Arial, sans-serif;
 }
 
 .content {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 1.5rem;
-  color: var(--text-color);
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
-h2 {
-  color: var(--text-color); 
-  font-size: 1.8rem;
+.title {
+  font-size: 2rem;
   margin-bottom: 1rem;
-}
-
-h3 {
-  color: var(--text-color);
-  margin-top: 2rem;
+  text-align: center;
 }
 
 .stats {
+  text-align: center;
   font-size: 1.1rem;
-  margin-bottom: 1.5rem;
-  color: var(--text-color);
+  margin-bottom: 2rem;
 }
 
-.list {
-  list-style: none;
-  padding-left: 0;
-  margin-top: 0.5rem;
+.section {
+  margin-bottom: 3rem;
 }
 
-.list li {
-  margin-bottom: 0.4rem;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
 }
 
-.list li a {
-  color: #3366ff;
+.card {
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
   text-decoration: none;
+  color: inherit;
 }
 
-.list li a:hover {
-  text-decoration: underline;
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 14px rgba(0, 0, 0, 0.1);
+}
+
+.card h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
 }
