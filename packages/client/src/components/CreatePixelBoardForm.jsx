@@ -1,4 +1,3 @@
-// src/components/CreatePixelBoardForm.jsx
 import React, { useState } from "react";
 import styles from "../styles/CreatePixelBoardForm.module.css";
 import axios from "axios";
@@ -14,6 +13,12 @@ const CreatePixelBoardForm = ({ onCreated, onCancel }) => {
 
   const handleCreateBoard = async (e) => {
     e.preventDefault();
+
+    if (!formData.endTime) {
+      alert("La date de fin est obligatoire.");
+      return;
+    }
+
     try {
       await axios.post("http://localhost:8000/api/pixelboards", formData, {
         withCredentials: true,
@@ -22,6 +27,13 @@ const CreatePixelBoardForm = ({ onCreated, onCancel }) => {
     } catch (err) {
       console.error("Erreur lors de la création :", err);
     }
+  };
+
+  // Génère la date/heure actuelle au format compatible avec datetime-local
+  const getMinDateTime = () => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    return now.toISOString().slice(0, 16); // format 'YYYY-MM-DDTHH:mm'
   };
 
   return (
@@ -59,7 +71,9 @@ const CreatePixelBoardForm = ({ onCreated, onCancel }) => {
               min="1"
               placeholder="10"
               value={formData.delayBetweenPixels}
-              onChange={(e) => setFormData({ ...formData, delayBetweenPixels: Number(e.target.value) })}
+              onChange={(e) =>
+                setFormData({ ...formData, delayBetweenPixels: Number(e.target.value) })
+              }
               required
             />
           </div>
@@ -76,17 +90,23 @@ const CreatePixelBoardForm = ({ onCreated, onCancel }) => {
           </div>
 
           <div className={styles.formGroup}>
-            <label>Date et heure de fin (optionnel)</label>
+            <label>Date et heure de fin</label>
             <input
               type="datetime-local"
               value={formData.endTime}
               onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
+              min={getMinDateTime()}
+              required
             />
           </div>
 
           <div className={styles.formButtons}>
-            <button type="submit" className={styles.submitButton}>Créer</button>
-            <button type="button" className={styles.cancelButton} onClick={onCancel}>Annuler</button>
+            <button type="submit" className={styles.submitButton}>
+              Créer
+            </button>
+            <button type="button" className={styles.cancelButton} onClick={onCancel}>
+              Annuler
+            </button>
           </div>
         </form>
       </div>
