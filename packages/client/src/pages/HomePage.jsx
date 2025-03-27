@@ -4,6 +4,7 @@ import axios from "axios";
 import styles from "../styles/HomePage.module.css";
 import Header from "../components/Header";
 import CreatePixelBoardForm from "../components/CreatePixelBoardForm";
+import EditPixelBoardForm from "../components/EditPixelBoardForm";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { getUserInfo } from "../services/api";
 
@@ -11,6 +12,7 @@ const HomePage = () => {
   const [user, setUser] = useState(null);
   const [pixelBoards, setPixelBoards] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [editBoard, setEditBoard] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
 
   const fetchBoards = async () => {
@@ -44,13 +46,22 @@ const HomePage = () => {
       {boards.map(board => (
         <div key={board._id} className={styles.card}>
           {user?.role === 'admin' && (
-            <button
-              className={styles.deleteButton}
-              title="Supprimer ce PixelBoard"
-              onClick={() => setConfirmDelete(board)}
-            >
-              🗑️
-            </button>
+            <div className={styles.cardActions}>
+              <button
+                className={styles.editButton}
+                title="Modifier ce PixelBoard"
+                onClick={() => setEditBoard(board)}
+              >
+                ✏️
+              </button>
+              <button
+                className={styles.deleteButton}
+                title="Supprimer ce PixelBoard"
+                onClick={() => setConfirmDelete(board)}
+              >
+                🗑️
+              </button>
+            </div>
           )}
           <Link to={`/pixelboard/${board._id}`} className={styles.cardContent}>
             <h4>{board.title}</h4>
@@ -67,7 +78,7 @@ const HomePage = () => {
       <Header user={user} onLogout={handleLogout} />
 
       <main className={styles.content}>
-        <h2 className={styles.title}> Bienvenue sur PixelBoard</h2>
+        <h2 className={styles.title}>Bienvenue sur PixelBoard</h2>
 
         {user?.role === 'admin' && (
           <div className={styles.adminActions}>
@@ -99,6 +110,17 @@ const HomePage = () => {
           <h3>🔒 PixelBoards terminés</h3>
           {boardsTermines.length > 0 ? renderBoards(boardsTermines) : <p>Aucun PixelBoard terminé.</p>}
         </section>
+
+        {editBoard && (
+          <EditPixelBoardForm
+            board={editBoard}
+            onUpdated={() => {
+              setEditBoard(null);
+              fetchBoards();
+            }}
+            onCancel={() => setEditBoard(null)}
+          />
+        )}
 
         {confirmDelete && (
           <ConfirmDialog

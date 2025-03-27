@@ -39,7 +39,7 @@
   padding: 1rem 1.5rem;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
 }
 
@@ -80,11 +80,33 @@
   background-color: #43a047;
 }
 
-.deleteButton {
+.cardActions {
   position: absolute;
   top: 8px;
   right: 10px;
-  background-color: transparent;
+  display: flex;
+  gap: 6px;
+}
+
+/* ✏️ Modifier */
+.editButton {
+  background: transparent;
+  color: var(--button-hover);
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.editButton:hover {
+  background-color: rgba(66, 165, 218, 0.1);
+}
+
+/* 🗑️ Supprimer */
+.deleteButton {
+  background: transparent;
   color: #d32f2f;
   border: none;
   font-size: 1.1rem;
