@@ -9,6 +9,7 @@ import { getUserInfo } from "../services/api";
 import { Link, useNavigate } from "react-router-dom";
 import SortControls from "../components/SortControls";
 import { sortBoards } from "../utils/sortBoards";
+import { filterBoards } from "../utils/filterBoards";
 
 const AdminPage = () => {
   const [user, setUser] = useState(null);
@@ -16,8 +17,13 @@ const AdminPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [editBoard, setEditBoard] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
+
   const [sortKey, setSortKey] = useState("title");
   const [sortOrder, setSortOrder] = useState("asc");
+  const [filterTitle, setFilterTitle] = useState("");
+  const [filterMinSize, setFilterMinSize] = useState(0);
+  const [filterMaxSize, setFilterMaxSize] = useState(Infinity);
+
   const navigate = useNavigate();
 
   const fetchBoards = async () => {
@@ -48,8 +54,25 @@ const AdminPage = () => {
     }
   };
 
-  const boardsEnCours = sortBoards(pixelBoards.filter(b => b.status === "en cours"), sortKey, sortOrder);
-  const boardsTermines = sortBoards(pixelBoards.filter(b => b.status === "terminée"), sortKey, sortOrder);
+  const boardsEnCours = sortBoards(
+    filterBoards(pixelBoards.filter(b => b.status === "en cours"), {
+      title: filterTitle,
+      minSize: filterMinSize,
+      maxSize: filterMaxSize
+    }),
+    sortKey,
+    sortOrder
+  );
+
+  const boardsTermines = sortBoards(
+    filterBoards(pixelBoards.filter(b => b.status === "terminée"), {
+      title: filterTitle,
+      minSize: filterMinSize,
+      maxSize: filterMaxSize
+    }),
+    sortKey,
+    sortOrder
+  );
 
   const renderBoards = (boards) => (
     <div className={styles.grid}>
@@ -112,6 +135,12 @@ const AdminPage = () => {
           sortOrder={sortOrder}
           setSortKey={setSortKey}
           setSortOrder={setSortOrder}
+          filterTitle={filterTitle}
+          setFilterTitle={setFilterTitle}
+          filterMinSize={filterMinSize}
+          setFilterMinSize={setFilterMinSize}
+          filterMaxSize={filterMaxSize}
+          setFilterMaxSize={setFilterMaxSize}
         />
 
         <section className={styles.section}>
