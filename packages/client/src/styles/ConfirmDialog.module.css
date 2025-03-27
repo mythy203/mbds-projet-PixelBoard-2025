@@ -1,62 +1,79 @@
 .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.dialog {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border-radius: 10px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.message {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.confirmButton {
+  background-color: #d32f2f;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  flex: 1;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.confirmButton:hover {
+  background-color: #b71c1c;
+}
+
+.cancelButton {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  flex: 1;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.cancelButton:hover {
+  background-color: var(--button-hover);
+}
+
+/* Responsive */
+@media (max-width: 500px) {
   .dialog {
-    background: white;
-    border-radius: 10px;
-    padding: 2rem;
-    max-width: 400px;
-    width: 100%;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-    text-align: center;
+    margin: 1rem;
+    padding: 1.5rem;
   }
-  
-  .message {
-    font-size: 1.1rem;
-    margin-bottom: 1.5rem;
-  }
-  
+
   .actions {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
+    flex-direction: column;
   }
-  
-  .confirmButton {
-    background-color: #d32f2f;
-    color: white;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    flex: 1;
-  }
-  
-  .confirmButton:hover {
-    background-color: #b71c1c;
-  }
-  
-  .cancelButton {
-    background-color: #ccc;
-    color: #333;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    flex: 1;
-  }
-  
-  .cancelButton:hover {
-    background-color: #bbb;
-  }
-  
+}
