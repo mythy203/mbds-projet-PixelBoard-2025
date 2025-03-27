@@ -34,36 +34,36 @@ const HomePage = () => {
   const boardsEnCours = pixelBoards.filter(b => b.status === "en cours");
   const boardsTermines = pixelBoards.filter(b => b.status === "terminée");
 
+  const renderBoards = (boards) => (
+    <div className={styles.grid}>
+      {boards.map(board => (
+        <Link to={`/pixelboard/${board._id}`} key={board._id} className={styles.card}>
+          <h4>{board.title}</h4>
+          <p>Status : <strong>{board.status}</strong></p>
+          <p>Dimensions : {board.size} x {board.size}</p>
+        </Link>
+      ))}
+    </div>
+  );
+
   return (
     <div className={styles.page}>
       <Header user={user} onLogout={handleLogout} />
 
       <main className={styles.content}>
-        <h2>Bienvenue sur PixelBoard </h2>
+        <h2 className={styles.title}>🎨 Bienvenue sur PixelBoard</h2>
         <p className={styles.stats}>
           Nombre total de PixelBoards : <strong>{pixelBoards.length}</strong>
         </p>
 
-        <section>
+        <section className={styles.section}>
           <h3>🟢 En cours de création</h3>
-          <ul className={styles.list}>
-            {boardsEnCours.map(board => (
-              <li key={board._id}>
-                <Link to={`/pixelboard/${board._id}`}>{board.title}</Link>
-              </li>
-            ))}
-          </ul>
+          {boardsEnCours.length > 0 ? renderBoards(boardsEnCours) : <p>Aucun PixelBoard en cours.</p>}
         </section>
 
-        <section>
+        <section className={styles.section}>
           <h3>🔒 PixelBoards terminés</h3>
-          <ul className={styles.list}>
-            {boardsTermines.map(board => (
-              <li key={board._id}>
-                <Link to={`/pixelboard/${board._id}`}>{board.title}</Link>
-              </li>
-            ))}
-          </ul>
+          {boardsTermines.length > 0 ? renderBoards(boardsTermines) : <p>Aucun PixelBoard terminé.</p>}
         </section>
       </main>
     </div>
