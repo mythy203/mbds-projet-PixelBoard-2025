@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import PixelCanvas from "./components/PixelCanvas";
-import TitleOverlay from "./components/TitleOverlay";
-import ResetViewButton from "./components/ResetViewButton";
+import PixelCanvas from "../components/PixelCanvas";
+import TitleOverlay from "../components/TitleOverlay";
+import ResetViewButton from "../components/ResetViewButton";
 
 const PixelBoardPage = () => {
   const { id } = useParams();

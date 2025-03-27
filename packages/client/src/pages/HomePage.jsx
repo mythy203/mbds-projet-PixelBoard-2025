@@ -1,61 +1,73 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from 'react-router-dom';
-import { getPixelBoardsCount, getUserInfo } from "../services/api";
+import { Link } from "react-router-dom";
 import axios from "axios";
+import styles from "../styles/HomePage.module.css";
+import Header from "../components/Header";
+import { getUserInfo } from "../services/api";
 
 const HomePage = () => {
-    const [count, setCount] = useState(0);
-    const [user, setUser] = useState(null);
-    const [pixelBoards, setPixelBoards] = useState([]);
+  const [user, setUser] = useState(null);
+  const [pixelBoards, setPixelBoards] = useState([]);
 
-    // Appel API pour récupérer le nombre de PixelBoards et les informations de l'utilisateur
-    useEffect(() => {
-        const fetchData = async () => {
-            const total = await getPixelBoardsCount();
-            setCount(total);
+  useEffect(() => {
+    const fetchData = async () => {
+      const userInfo = await getUserInfo();
+      setUser(userInfo);
 
-            const userInfo = await getUserInfo();
-            setUser(userInfo);
+      const response = await axios.get("http://localhost:8000/api/pixelboards");
+      setPixelBoards(response.data);
+    };
+    fetchData();
+  }, []);
 
-            const response = await axios.get('http://localhost:8000/api/pixelboards');
-            setPixelBoards(response.data);
-        };
-        fetchData();
-    }, []);
+  const handleLogout = async () => {
+    try {
+      await axios.post("http://localhost:8000/api/auth/logout", {}, {
+        withCredentials: true,
+      });
+      setUser(null);
+    } catch (err) {
+      console.error("Erreur de déconnexion :", err);
+    }
+  };
 
-    const navigate = useNavigate();
+  const boardsEnCours = pixelBoards.filter(b => b.status === "en cours");
+  const boardsTermines = pixelBoards.filter(b => b.status === "terminée");
 
-    const handleLogout = async () => {
-        try {
-            await axios.post('http://localhost:8000/api/auth/logout', {}, {
-                withCredentials: true
-            });
-            setUser(null); // 🔥 Réinitialise l'utilisateur connecté
-        } catch (err) {
-            console.error('Error logging out', err);
-        }
-    };    
+  return (
+    <div className={styles.page}>
+      <Header user={user} onLogout={handleLogout} />
 
-    return (
-        <div className="App">
-            <header className="App-header">
-                <h1>Bienvenue sur PixelBoard</h1>
-                {user && <p>Connecté en tant que : <strong>{user.username}</strong></p>}
-                <p>Nombre total de PixelBoards : <strong>{count}</strong></p>
-                <button onClick={() => navigate('/login')}>Login</button>
-                <button onClick={() => navigate('/register')}>Register</button>
-                <button onClick={handleLogout}>Logout</button>
-                <h2>Liste des PixelBoards</h2>
-                <ul>
-                    {pixelBoards.map(board => (
-                        <li key={board._id}>
-                            <Link to={`/pixelboard/${board._id}`}>{board.title}</Link>
-                        </li>
-                    ))}
-                </ul>
-            </header>
-        </div>
-    );
+      <main className={styles.content}>
+        <h2>Bienvenue sur PixelBoard </h2>
+        <p className={styles.stats}>
+          Nombre total de PixelBoards : <strong>{pixelBoards.length}</strong>
+        </p>
+
+        <section>
+          <h3>🟢 En cours de création</h3>
+          <ul className={styles.list}>
+            {boardsEnCours.map(board => (
+              <li key={board._id}>
+                <Link to={`/pixelboard/${board._id}`}>{board.title}</Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section>
+          <h3>🔒 PixelBoards terminés</h3>
+          <ul className={styles.list}>
+            {boardsTermines.map(board => (
+              <li key={board._id}>
+                <Link to={`/pixelboard/${board._id}`}>{board.title}</Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </main>
+    </div>
+  );
 };
 
 export default HomePage;

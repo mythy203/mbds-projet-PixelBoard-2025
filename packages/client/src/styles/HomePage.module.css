@@ -1,0 +1,48 @@
+.page {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  font-family: Arial, sans-serif;
+}
+
+.content {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  color: var(--text-color);
+}
+
+h2 {
+  color: var(--text-color); 
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+h3 {
+  color: var(--text-color);
+  margin-top: 2rem;
+}
+
+.stats {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+}
+
+.list {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0.5rem;
+}
+
+.list li {
+  margin-bottom: 0.4rem;
+}
+
+.list li a {
+  color: #3366ff;
+  text-decoration: none;
+}
+
+.list li a:hover {
+  text-decoration: underline;
+}
