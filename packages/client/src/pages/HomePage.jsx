@@ -1,30 +1,34 @@
+// HomePage.jsx
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import styles from "../styles/HomePage.module.css";
 import Header from "../components/Header";
+import CreatePixelBoardForm from "../components/CreatePixelBoardForm";
 import { getUserInfo } from "../services/api";
 
 const HomePage = () => {
   const [user, setUser] = useState(null);
   const [pixelBoards, setPixelBoards] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+
+  const fetchBoards = async () => {
+    const response = await axios.get("http://localhost:8000/api/pixelboards");
+    setPixelBoards(response.data);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       const userInfo = await getUserInfo();
       setUser(userInfo);
-
-      const response = await axios.get("http://localhost:8000/api/pixelboards");
-      setPixelBoards(response.data);
+      await fetchBoards();
     };
     fetchData();
   }, []);
 
   const handleLogout = async () => {
     try {
-      await axios.post("http://localhost:8000/api/auth/logout", {}, {
-        withCredentials: true,
-      });
+      await axios.post("http://localhost:8000/api/auth/logout", {}, { withCredentials: true });
       setUser(null);
     } catch (err) {
       console.error("Erreur de déconnexion :", err);
@@ -40,7 +44,7 @@ const HomePage = () => {
         <Link to={`/pixelboard/${board._id}`} key={board._id} className={styles.card}>
           <h4>{board.title}</h4>
           <p>Status : <strong>{board.status}</strong></p>
-          <p>Dimensions : {board.size} x {board.size}</p>
+          <p>Dimensions : {board.size?.width} x {board.size?.height}</p>
         </Link>
       ))}
     </div>
@@ -52,6 +56,24 @@ const HomePage = () => {
 
       <main className={styles.content}>
         <h2 className={styles.title}>🎨 Bienvenue sur PixelBoard</h2>
+
+        {user?.role === 'admin' && (
+          <div className={styles.adminActions}>
+            <button className={styles.createButton} onClick={() => setShowForm(true)}>
+              ➕ Créer un PixelBoard
+            </button>
+            {showForm && (
+              <CreatePixelBoardForm
+                onCreated={() => {
+                  setShowForm(false);
+                  fetchBoards();
+                }}
+                onCancel={() => setShowForm(false)}
+              />
+            )}
+          </div>
+        )}
+
         <p className={styles.stats}>
           Nombre total de PixelBoards : <strong>{pixelBoards.length}</strong>
         </p>

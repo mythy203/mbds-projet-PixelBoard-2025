@@ -4,7 +4,7 @@ import HomePage from "./pages/HomePage.jsx";
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import PixelBoardPage from './pages/PixelBoardPage.jsx';
-import CreatePixelBoardForm from './pages/CreatePixelBoardForm.jsx';
+import CreatePixelBoardForm from './components/CreatePixelBoardForm.jsx';
 import "./App.css";
 
 function App() {
