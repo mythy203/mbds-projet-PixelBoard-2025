@@ -1,4 +1,3 @@
-// HomePage.jsx
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -68,7 +67,7 @@ const HomePage = () => {
       <Header user={user} onLogout={handleLogout} />
 
       <main className={styles.content}>
-        <h2 className={styles.title}>🎨 Bienvenue sur PixelBoard</h2>
+        <h2 className={styles.title}> Bienvenue sur PixelBoard</h2>
 
         {user?.role === 'admin' && (
           <div className={styles.adminActions}>
