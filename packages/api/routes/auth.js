@@ -49,7 +49,7 @@ router.get('/me', async (req, res) => {
             return res.status(401).json({ message: 'Unauthorized' });
         }
         const decoded = jwt.verify(token, secret);
-        const user = await User.findById(decoded.userId).select('username');
+        const user = await User.findById(decoded.userId).select('username role');
         res.json(user);
     } catch (err) {
         res.status(401).json({ message: 'Invalid token' });

@@ -8,9 +8,66 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	width: 100%;
+	background-color: var(--bg-color);
+	color: var(--text-color);
+	transition: background-color 0.3s ease, color 0.3s ease;
   }
-
+  
   code {
-	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-	  monospace;
+	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
   }
+  
+  :root {
+	--bg-color: #ffffff;
+	--text-color: #000000;
+	--button-bg: #574e4e;
+	--button-text: #ffffff;
+	--button-hover: #42a5da;
+  }
+  
+  body.dark {
+	--bg-color: #121212;
+	--text-color: #f0f0f0;
+	--button-bg: #444;
+	--button-text: #f0f0f0;
+	--button-hover: #666;
+  }
+  
+  button {
+	background-color: var(--button-bg);
+	color: var(--button-text);
+	border: none;
+	padding: 0.5rem 1rem;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: bold;
+	transition: background-color 0.2s ease;
+  }
+  
+  button:hover {
+	background-color: var(--button-hover);
+  }
+  
+  .toggle {
+	background: transparent;
+	border: none;
+	font-size: 1.4rem;
+	cursor: pointer;
+	margin-right: 1rem;
+	color: inherit;
+  }
+  body.dark .toolbar {
+	background-color: #1e1e1e;
+	color: #f0f0f0;
+  }
+  
+  body.dark .button {
+	background-color: #444;
+	color: #f0f0f0;
+  }
+  
+  body.dark .button:hover {
+	background-color: #666;
+  }
+  
+  
