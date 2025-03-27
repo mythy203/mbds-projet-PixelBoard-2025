@@ -7,6 +7,8 @@ import EditPixelBoardForm from "../components/EditPixelBoardForm";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { getUserInfo } from "../services/api";
 import { Link, useNavigate } from "react-router-dom";
+import SortControls from "../components/SortControls";
+import { sortBoards } from "../utils/sortBoards";
 
 const AdminPage = () => {
   const [user, setUser] = useState(null);
@@ -14,6 +16,8 @@ const AdminPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [editBoard, setEditBoard] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const [sortKey, setSortKey] = useState("title");
+  const [sortOrder, setSortOrder] = useState("asc");
   const navigate = useNavigate();
 
   const fetchBoards = async () => {
@@ -25,7 +29,7 @@ const AdminPage = () => {
     const fetchData = async () => {
       const userInfo = await getUserInfo();
       if (userInfo?.role !== "admin") {
-        navigate("/"); // redirige si pas admin
+        navigate("/");
       } else {
         setUser(userInfo);
         await fetchBoards();
@@ -44,8 +48,8 @@ const AdminPage = () => {
     }
   };
 
-  const boardsEnCours = pixelBoards.filter(b => b.status === "en cours");
-  const boardsTermines = pixelBoards.filter(b => b.status === "terminée");
+  const boardsEnCours = sortBoards(pixelBoards.filter(b => b.status === "en cours"), sortKey, sortOrder);
+  const boardsTermines = sortBoards(pixelBoards.filter(b => b.status === "terminée"), sortKey, sortOrder);
 
   const renderBoards = (boards) => (
     <div className={styles.grid}>
@@ -102,6 +106,13 @@ const AdminPage = () => {
         <p className={styles.stats}>
           Nombre total de PixelBoards : <strong>{pixelBoards.length}</strong>
         </p>
+
+        <SortControls
+          sortKey={sortKey}
+          sortOrder={sortOrder}
+          setSortKey={setSortKey}
+          setSortOrder={setSortOrder}
+        />
 
         <section className={styles.section}>
           <h3>🟢 En cours de création</h3>
