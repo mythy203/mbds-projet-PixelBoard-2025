@@ -50,9 +50,13 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 
-// Mettre à jour un PixelBoard par ID
+// Mettre à jour un PixelBoard par ID (admin uniquement)
 router.put('/:id', authMiddleware, async (req, res) => {
     try {
+        if (req.userRole !== 'admin') {
+            return res.status(403).json({ message: 'Seuls les administrateurs peuvent modifier un PixelBoard.' });
+        }
+
         const { title, size, mode, delayBetweenPixels, endTime } = req.body;
         const updatedBoard = await PixelBoard.findByIdAndUpdate(
             req.params.id,
@@ -67,6 +71,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
         res.status(400).json({ message: 'Erreur lors de la mise à jour du PixelBoard', error });
     }
 });
+
 
 // Supprimer un PixelBoard par ID
 router.delete('/:id', authMiddleware, async (req, res) => {
