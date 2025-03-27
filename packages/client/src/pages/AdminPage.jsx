@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import styles from "../styles/HomePage.module.css"; // Réutilise les styles existants
+import styles from "../styles/AdminPage.module.css";
 import Header from "../components/Header";
 import CreatePixelBoardForm from "../components/CreatePixelBoardForm";
 import EditPixelBoardForm from "../components/EditPixelBoardForm";
