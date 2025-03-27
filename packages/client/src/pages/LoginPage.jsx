@@ -17,14 +17,23 @@ const LoginPage = () => {
         { username, password },
         { withCredentials: true }
       );
-
+  
       if (response.data.message === 'Logged in') {
-        navigate('/');
+        const role = response.data.role;
+        if (role === 'admin') {
+          navigate('/admin');
+        } else if (role === 'user') {
+          navigate('/user'); // ✅ redirection vers la page utilisateur
+        } else {
+          navigate('/'); // fallback
+        }
       }
     } catch (err) {
       setError('Identifiants invalides');
     }
   };
+  
+  
 
   return (
     <div className={styles.page}>

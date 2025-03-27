@@ -19,17 +19,34 @@ router.post('/signup', async (req, res) => {
     res.status(201).json({ message: 'User created' });
 });
 
-// Route de connexion
+// Connexion
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    const user = await User.findOne({ username });
-    if (!user || !await bcrypt.compare(password, user.password)) {
+  
+    try {
+      const user = await User.findOne({ username });
+  
+      if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).json({ message: 'Invalid credentials' });
+      }
+  
+      const token = jwt.sign({ userId: user._id }, secret, { expiresIn: '1h' });
+  
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: true, // false en local sans HTTPS
+        sameSite: 'Lax'
+      });
+  
+      res.json({
+        message: 'Logged in',
+        role: user.role // ✅ renvoie le rôle ici
+      });
+    } catch (error) {
+      console.error("Erreur lors de la connexion :", error);
+      res.status(500).json({ message: 'Server error' });
     }
-    const token = jwt.sign({ userId: user._id }, secret, { expiresIn: '1h' });
-    res.cookie('token', token, { httpOnly: true, secure: true });
-    res.json({ message: 'Logged in' });
-});
+  });
 
 router.post('/logout', (req, res) => {
     res.clearCookie('token', {
