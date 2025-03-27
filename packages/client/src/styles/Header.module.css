@@ -1,75 +1,101 @@
 .toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #e5e9f4;
-    color: rgb(87, 78, 78);
-    padding: 1rem 2rem;
-    font-weight: bold;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  padding: 1rem 2rem;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-wrap: wrap;
+}
+
+.logoGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 1.4rem;
+  cursor: pointer;
+  user-select: none;
+  font-family: 'Press Start 2P', cursive;
+  white-space: nowrap;
+}
+
+.userArea {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.username {
+  font-weight: 500;
+}
+
+.button {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.button:hover {
+  background-color: var(--button-hover);
+}
+
+.toggle {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  margin-top: -4px;
+  color: inherit;
+}
+
+.role {
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    gap: 0.8rem;
   }
-  
-  .logo {
-    font-size: 1.4rem;
-    cursor: pointer;
-    user-select: none;
-    font-family: 'Press Start 2P', cursive;
-  }
-  
+
   .userArea {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
-  
-  .username {
-    font-weight: 500;
+
+  .logoGroup {
+    width: 100%;
+    justify-content: space-between;
   }
-  
-  body.dark .role {
-    color: #bbb;
+
+  .logo {
+    font-size: 1.2rem;
   }
-  
-  .button {
-    background-color: rgb(87, 78, 78);
-    color: #efefef;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
-  }
-  
- 
+
   .toggle {
-    background: none;
-    border: none;
-    font-size: 1.4rem;
-    cursor: pointer;
-    margin-right: 1rem;
-    vertical-align: middle;
-    margin-top: -10px;
+    font-size: 1.3rem;
+    margin-top: 0;
   }
-  body.dark .toolbar {
-    background-color: #1e1e1e;
-    color: #f0f0f0;
-    
-  }
-  
-  body.dark .button {
-    background-color: #444;
-    color: #f0f0f0;
-  }
-  
-  body.dark .button:hover {
-    background-color: #666;
-  }
-  
-  body.dark .role {
-    color: #bbb;
-  }
-  
-  
+}

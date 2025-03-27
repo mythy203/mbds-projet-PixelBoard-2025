@@ -9,18 +9,20 @@ const Header = ({ user, onLogout }) => {
 
   return (
     <header className={`${styles.toolbar} toolbar`}>
-      <div className={`${styles.logo} logo`} onClick={() => navigate("/")}>
-        PixelBoard
+      <div className={styles.logoGroup}>
+        <span onClick={() => navigate("/")} className={styles.logo}>
+          PixelBoard
+        </span>
         <button
           onClick={() => setDarkMode(!darkMode)}
-          className={`${styles.toggle} toggle`}
+          className={styles.toggle}
         >
           {darkMode ? "☀️" : "🌙"}
         </button>
       </div>
 
       <div className={`${styles.userArea} userArea`}>
-        
+
 
         {user ? (
           <>
