@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styles from "../styles/RegisterPage.module.css";
@@ -8,7 +8,14 @@ const RegisterPage = () => {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("user");
   const [error, setError] = useState("");
+  const [theme, setTheme] = useState("light");
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme") || "light";
+    setTheme(storedTheme);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,10 +40,11 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ${theme === "dark" ? styles.dark : ""}`}>
       <video autoPlay muted loop className={styles.videoBg}>
         <source src="/background-signup-login.mp4" type="video/mp4" />
       </video>
+
       <div className={styles.container}>
         <h2 className={styles.title}>Créer un compte</h2>
         <form onSubmit={handleSubmit} className={styles.form}>
@@ -89,13 +97,13 @@ const RegisterPage = () => {
           <button type="submit" className={styles.button}>
             Créer un compte
           </button>
+
           <p className={styles.switch}>
             Déjà inscrit ?{" "}
             <a href="/login" className={styles.link}>
               Se connecter
             </a>
           </p>
-
         </form>
       </div>
     </div>

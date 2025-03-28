@@ -63,19 +63,42 @@ const HomePage = () => {
 
       {/* Hero */}
       <section className={styles.hero}>
-        <video className={styles.video} autoPlay muted loop playsInline>
-          <source src="/chill-mario-pixel-moewalls-com.mp4" type="video/mp4" />
-        </video>
-        <div className={styles.overlay}>
-          <h1 className={styles.typingLine}>
-            {combinedText.slice(0, visibleChars).split("").map((char, i) => (
-              <span key={i} className={i >= fullText.length ? styles.logoFont : ""}>
-                {char}
-              </span>
-            ))}
-          </h1>
-        </div>
-      </section>
+  <video className={styles.video} autoPlay muted loop playsInline>
+    <source src="/chill-mario-pixel-moewalls-com.mp4" type="video/mp4" />
+  </video>
+
+  <div className={styles.overlay}>
+    <div className={styles.heroContent}>
+      <h1 className={styles.typingLine}>
+        {combinedText.slice(0, visibleChars).split("").map((char, i) => (
+          <span key={i} className={i >= fullText.length ? styles.logoFont : ""}>
+            {char}
+          </span>
+        ))}
+      </h1>
+
+      {visibleChars >= combinedText.length && (
+        <button
+          className={styles.heroButton}
+          onClick={() => {
+            if (!user) {
+              window.location.href = "/login";
+            } else {
+              window.location.href = user.role === "admin" ? "/admin" : "/user";
+            }
+          }}
+        >
+          {!user
+            ? " Commencer votre aventure !"
+            : user.role === "admin"
+            ? "Aller au tableau de bord admin"
+            : "Mon espace"}
+        </button>
+      )}
+    </div>
+  </div>
+</section>
+
 
       {/* Stats */}
       <section className={styles.statsGrid}>

@@ -1,136 +1,174 @@
 .page {
-    background-size: cover;
-    background-position: center;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-  }
-  
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.container {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  min-width: 350px;
+  max-width: 450px;
+  width: 100%;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #222;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.9rem;
+}
+
+.input {
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+.button {
+  background-color: #3366ff;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  width: fit-content;
+  margin: 0 auto;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #1a53ff;
+}
+
+.error {
+  color: red;
+  font-size: 0.9rem;
+}
+
+.videoBg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  min-height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.role-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.role-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.2rem;
+}
+
+.role-options {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.role-label {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+
+.role-radio {
+  accent-color: #3366ff;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+.switch {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.link {
+  color: #3366ff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.dark .container {
+  background-color: #1e1e1e;
+  color: #f0f0f0;
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.08);
+}
+
+.dark .title {
+  color: #f0f0f0;
+}
+
+.dark .input {
+  background-color: #2a2a2a;
+  border: 1px solid #555;
+  color: #fff;
+}
+
+.dark .input::placeholder {
+  color: #aaa;
+}
+
+.dark .role-title,
+.dark .role-label,
+.dark .switch {
+  color: #ccc;
+}
+
+.dark .link {
+  color: #66aaff;
+}
+
+.dark .button {
+  background-color: #4d88ff;
+}
+
+.dark .button:hover {
+  background-color: #3366ff;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
   .container {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    min-width: 350px;
-    max-width: 450px;
-    width: 100%;
-    text-align: center;
+    padding: 1.5rem;
   }
-  
-  .title {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    color: #222;
-  }
-  
-  .form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.9rem;
-  }
-  
-  .input {
-    padding: 0.6rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    width: 100%;
-  }
-  
-  .button {
-    background-color: #3366ff;
-    color: white;
-    border: none;
-    padding: 0.6rem 1.5rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    width: fit-content;
-    margin: 0 auto;
-  }
-  
-  .button:hover {
-    background-color: #1a53ff;
-  }
-  
-  .error {
-    color: red;
-    font-size: 0.9rem;
-  }
-  .videoBg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    min-width: 100%;
-    min-height: 100%;
-    object-fit: cover;
-    z-index: -1;
-    pointer-events: none;
-  }
-  
-  
-  /* Radio role section */
-  .role-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  .role-title {
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: #333;
-    margin-bottom: 0.2rem;
-  }
-  
+
   .role-options {
-    display: flex;
-    gap: 1.5rem;
-    justify-content: center;
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
-  .role-label {
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    cursor: pointer;
-  }
-  
-  .role-radio {
-    accent-color: #3366ff;
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-  }
-  .switch {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    color: #333;
-  }
-  
-  .link {
-    color: #3366ff;
-    text-decoration: none;
-    font-weight: 500;
-  }
-  
-  .link:hover {
-    text-decoration: underline;
-  }
-  
-  
-  /* Responsive */
-  @media (max-width: 480px) {
-    .container {
-      padding: 1.5rem;
-    }
-  
-    .role-options {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  }
-  
+}

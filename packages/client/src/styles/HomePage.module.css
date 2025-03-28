@@ -197,6 +197,36 @@ body.dark .card {
   margin-right: 0.5rem;
   vertical-align: middle;
 }
+.heroButton {
+  margin-top: 2rem;
+  font-size: 1rem;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Press Start 2P', cursive;
+  background: linear-gradient(135deg, #8e2de2, #4a00e0); 
+  color: white;
+  box-shadow: 0 0 15px rgba(138, 43, 226, 0.7);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.heroButton:hover {
+  background: linear-gradient(135deg, #a4508b, #5f0a87);
+  box-shadow: 0 0 20px rgba(173, 216, 230, 0.8);
+  transform: scale(1.05);
+}
+
+.heroContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  position: relative;
+}
 
 @media (max-width: 768px) {
   .typingLine {
@@ -214,5 +244,15 @@ body.dark .card {
 
   .card {
     width: 90%;
+  }
+  .heroButton {
+    font-size: 0.75rem;
+    padding: 0.8rem 1.2rem;
+    letter-spacing: 0.5px;
+  }
+
+  .typingLine {
+    font-size: 1.4rem;
+    text-align: center;
   }
 }
