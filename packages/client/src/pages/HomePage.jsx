@@ -1,146 +1,165 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Slider from "react-slick";
 import styles from "../styles/HomePage.module.css";
 import Header from "../components/Header";
-import CreatePixelBoardForm from "../components/CreatePixelBoardForm";
-import EditPixelBoardForm from "../components/EditPixelBoardForm";
-import ConfirmDialog from "../components/ConfirmDialog";
 import { getUserInfo } from "../services/api";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const HomePage = () => {
   const [user, setUser] = useState(null);
   const [pixelBoards, setPixelBoards] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-  const [editBoard, setEditBoard] = useState(null);
-  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [userCount, setUserCount] = useState(0);
+  const [visibleChars, setVisibleChars] = useState(0);
 
-  const fetchBoards = async () => {
-    const response = await axios.get("http://localhost:8000/api/pixelboards");
-    setPixelBoards(response.data);
-  };
+  const fullText = "Bienvenue sur ";
+  const pixelText = "PixelBoard ";
+  const combinedText = fullText + pixelText;
 
   useEffect(() => {
     const fetchData = async () => {
       const userInfo = await getUserInfo();
       setUser(userInfo);
-      await fetchBoards();
+
+      const boardsRes = await axios.get("http://localhost:8000/api/pixelboards");
+      setPixelBoards(boardsRes.data);
+
+      const usersRes = await axios.get("http://localhost:8000/api/users");
+      const count = usersRes.data.filter(u => u.role === "user").length;
+      setUserCount(count);
     };
     fetchData();
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      await axios.post("http://localhost:8000/api/auth/logout", {}, { withCredentials: true });
-      setUser(null);
-    } catch (err) {
-      console.error("Erreur de déconnexion :", err);
-    }
-  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisibleChars(prev => {
+        if (prev < combinedText.length) return prev + 1;
+        clearInterval(interval);
+        return prev;
+      });
+    }, 80);
+    return () => clearInterval(interval);
+  }, []);
 
   const boardsEnCours = pixelBoards.filter(b => b.status === "en cours");
   const boardsTermines = pixelBoards.filter(b => b.status === "terminée");
 
-  const renderBoards = (boards) => (
-    <div className={styles.grid}>
-      {boards.map(board => (
-        <div key={board._id} className={styles.card}>
-          {user?.role === 'admin' && (
-            <div className={styles.cardActions}>
-              <button
-                className={styles.editButton}
-                title="Modifier ce PixelBoard"
-                onClick={() => setEditBoard(board)}
-              >
-                ✏️
-              </button>
-              <button
-                className={styles.deleteButton}
-                title="Supprimer ce PixelBoard"
-                onClick={() => setConfirmDelete(board)}
-              >
-                🗑️
-              </button>
-            </div>
-          )}
-          <Link to={`/pixelboard/${board._id}`} className={styles.cardContent}>
-            <h4>{board.title}</h4>
-            <p>Status : <strong>{board.status}</strong></p>
-            <p>Dimensions : {board.size} x {board.size}</p>
-          </Link>
-        </div>
-      ))}
-    </div>
-  );
+  const sliderSettings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: true,
+    responsive: [{ breakpoint: 768, settings: { slidesToShow: 1 } }]
+  };
 
   return (
     <div className={styles.page}>
-      <Header user={user} onLogout={handleLogout} />
+      <Header user={user} onLogout={() => setUser(null)} />
 
-      <main className={styles.content}>
-        <h2 className={styles.title}>Bienvenue sur PixelBoard</h2>
+      {/* Hero */}
+      <section className={styles.hero}>
+  <video className={styles.video} autoPlay muted loop playsInline>
+    <source src="/chill-mario-pixel-moewalls-com.mp4" type="video/mp4" />
+  </video>
 
-        {user?.role === 'admin' && (
-          <div className={styles.adminActions}>
-            <button className={styles.createButton} onClick={() => setShowForm(true)}>
-              ➕ Créer un PixelBoard
-            </button>
-            {showForm && (
-              <CreatePixelBoardForm
-                onCreated={() => {
-                  setShowForm(false);
-                  fetchBoards();
-                }}
-                onCancel={() => setShowForm(false)}
-              />
-            )}
-          </div>
-        )}
+  <div className={styles.overlay}>
+    <div className={styles.heroContent}>
+      <h1 className={styles.typingLine}>
+        {combinedText.slice(0, visibleChars).split("").map((char, i) => (
+          <span key={i} className={i >= fullText.length ? styles.logoFont : ""}>
+            {char}
+          </span>
+        ))}
+      </h1>
 
-        <p className={styles.stats}>
-          Nombre total de PixelBoards : <strong>{pixelBoards.length}</strong>
-        </p>
+      {visibleChars >= combinedText.length && (
+        <button
+          className={styles.heroButton}
+          onClick={() => {
+            if (!user) {
+              window.location.href = "/login";
+            } else {
+              window.location.href = user.role === "admin" ? "/admin" : "/user";
+            }
+          }}
+        >
+          {!user
+            ? " Commencer votre aventure !"
+            : user.role === "admin"
+            ? "Aller au tableau de bord admin"
+            : "Mon espace"}
+        </button>
+      )}
+    </div>
+  </div>
+</section>
 
-        <section className={styles.section}>
-          <h3>🟢 En cours de création</h3>
-          {boardsEnCours.length > 0 ? renderBoards(boardsEnCours) : <p>Aucun PixelBoard en cours.</p>}
-        </section>
 
-        <section className={styles.section}>
-          <h3>🔒 PixelBoards terminés</h3>
-          {boardsTermines.length > 0 ? renderBoards(boardsTermines) : <p>Aucun PixelBoard terminé.</p>}
-        </section>
+      {/* Stats */}
+      <section className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}>👥</div>
+          <div className={styles.statLabel}>Utilisateurs inscrits</div>
+          <div className={styles.statNumber}>{userCount}</div>
+        </div>
 
-        {editBoard && (
-          <EditPixelBoardForm
-            board={editBoard}
-            onUpdated={() => {
-              setEditBoard(null);
-              fetchBoards();
-            }}
-            onCancel={() => setEditBoard(null)}
-          />
-        )}
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}>🧩</div>
+          <div className={styles.statLabel}>PixelBoards créés</div>
+          <div className={styles.statNumber}>{pixelBoards.length}</div>
+        </div>
+      </section>
 
-        {confirmDelete && (
-          <ConfirmDialog
-            message={`Supprimer le PixelBoard "${confirmDelete.title}" ?`}
-            onConfirm={async () => {
-              try {
-                await axios.delete(`http://localhost:8000/api/pixelboards/${confirmDelete._id}`, {
-                  withCredentials: true,
-                });
-                await fetchBoards();
-                setConfirmDelete(null);
-              } catch (err) {
-                console.error("Erreur lors de la suppression :", err);
-                setConfirmDelete(null);
-              }
-            }}
-            onCancel={() => setConfirmDelete(null)}
-          />
-        )}
-      </main>
+      {/* Carousels */}
+      <section className={styles.boardsSection}>
+        <div className={styles.carouselBlock}>
+          <h3>
+            <img src="mario-luigi.gif" alt="En cours" className={styles.icon} />
+            En cours
+          </h3>
+          {boardsEnCours.length > 0 ? (
+            <Slider {...sliderSettings}>
+              {boardsEnCours.map(board => (
+                <div key={board._id} className={styles.slide}>
+                  <div className={styles.card}>
+                    <Link to={`/pixelboard/${board._id}`} className={styles.cardContent}>
+                      <h4>{board.title}</h4>
+                      <p>Status : <strong>{board.status}</strong></p>
+                      <p>Taille : {board.size} x {board.size}</p>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </Slider>
+          ) : <p>Aucun PixelBoard en cours.</p>}
+        </div>
+
+        <div className={styles.carouselBlock}>
+          <h3>
+            <img src="mario-dancing.gif" alt="Terminée" className={styles.icon} />
+            Terminée
+          </h3>          {boardsTermines.length > 0 ? (
+            <Slider {...sliderSettings}>
+              {boardsTermines.map(board => (
+                <div key={board._id} className={styles.slide}>
+                  <div className={styles.card}>
+                    <Link to={`/pixelboard/${board._id}`} className={styles.cardContent}>
+                      <h4>{board.title}</h4>
+                      <p>Status : <strong>{board.status}</strong></p>
+                      <p>Taille : {board.size} x {board.size}</p>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </Slider>
+          ) : <p>Aucun PixelBoard terminé.</p>}
+        </div>
+      </section>
     </div>
   );
 };

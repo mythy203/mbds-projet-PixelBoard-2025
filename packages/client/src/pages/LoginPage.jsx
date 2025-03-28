@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/LoginPage.module.css';
@@ -7,7 +7,13 @@ const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [theme, setTheme] = useState('light');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme") || "light";
+    setTheme(storedTheme);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +25,14 @@ const LoginPage = () => {
       );
 
       if (response.data.message === 'Logged in') {
-        navigate('/');
+        const role = response.data.role;
+        if (role === 'admin') {
+          navigate('/admin');
+        } else if (role === 'user') {
+          navigate('/user');
+        } else {
+          navigate('/');
+        }
       }
     } catch (err) {
       setError('Identifiants invalides');
@@ -27,7 +40,11 @@ const LoginPage = () => {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ${theme === 'dark' ? styles.dark : ''}`}>
+      <a href="/" className={styles.backHome}>
+        ⬅️ Accueil
+      </a>
+
       <video autoPlay muted loop className={styles.videoBg}>
         <source src="/background-signup-login.mp4" type="video/mp4" />
       </video>
@@ -57,14 +74,13 @@ const LoginPage = () => {
           <button type="submit" className={styles.button}>
             Connexion
           </button>
+
           <p className={styles.switch}>
             Pas encore inscrit ?{" "}
             <a href="/register" className={styles.link}>
               Inscription
             </a>
           </p>
-
-
         </form>
       </div>
     </div>
