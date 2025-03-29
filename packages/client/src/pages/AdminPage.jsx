@@ -1,3 +1,4 @@
+// AdminPage.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "../styles/AdminPage.module.css";
@@ -68,9 +69,21 @@ const AdminPage = () => {
     sortOrder
   );
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "—";
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("fr-FR", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   const renderBoards = (boards) => (
     <div className={styles.grid}>
-      {boards.map(board => (
+      {boards.map((board) => (
         <div key={board._id} className={styles.card}>
           <div className={styles.cardActions}>
             <button
@@ -88,15 +101,18 @@ const AdminPage = () => {
               🗑️
             </button>
           </div>
+
           <Link to={`/pixelboard/${board._id}`} className={styles.cardContent}>
             <h4>{board.title}</h4>
             <p>
-              Statut :{" "}
+              <strong>Statut :</strong>{" "}
               <span className={`${styles.badge} ${styles[board.status.replace(" ", "_")]}`}>
                 {board.status}
               </span>
             </p>
-            <p>Dimensions : {board.size} x {board.size}</p>
+            <p><strong>Dimensions :</strong> {board.size} x {board.size}</p>
+            <p><strong>Créé le :</strong> {formatDate(board.createdAt)}</p>
+            <p><strong>Fin prévue :</strong> {formatDate(board.endTime)}</p>
           </Link>
         </div>
       ))}
