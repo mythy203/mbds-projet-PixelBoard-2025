@@ -5,7 +5,7 @@ const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange, user }, ref) =
 	const colors = ["#FF5733", "#33FF57", "#3357FF", "#FFFF33", "#FF33FF", "#33FFFF", "#000000", "#FFFFFF"];
 	const [selectedColor, setSelectedColor] = useState(colors[0]);
 	const [pixels, setPixels] = useState([]);
-	 const canvasRef = useRef(null);
+	const canvasRef = useRef(null);
     const [scale, setScale] = useState(1);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
     const [hoveredPixel, setHoveredPixel] = useState(null);
@@ -228,6 +228,12 @@ const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange, user }, ref) =
     useEffect(() => {
         centerCanvas();
     }, [pixelBoard]);
+
+	useEffect(() => {
+		axios.get(`http://localhost:8000/api/pixels/${pixelBoard._id}`).then((response) => {
+			setPixels(response.data);
+		});
+	}, [pixelBoard._id]);
 
 	return (
 		<>
