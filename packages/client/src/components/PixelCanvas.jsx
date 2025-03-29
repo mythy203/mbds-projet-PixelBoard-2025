@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } from "react";
+import axios from "axios";
 
-const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange }, ref) => {
+const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange, user }, ref) => {
 	const colors = ["#FF5733", "#33FF57", "#3357FF", "#FFFF33", "#FF33FF", "#33FFFF", "#000000", "#FFFFFF"];
 	const [selectedColor, setSelectedColor] = useState(colors[0]);
 	const [pixels, setPixels] = useState([]);
@@ -144,7 +145,7 @@ const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange }, ref) => {
     }, [scale]);
 
 	// Handle mouse dragging and hovering
-	const handleMouseDown = (e) => {
+	const handleMouseDown = async (e) => {
 		const canvas = canvasRef.current;
 		const rect = canvas.getBoundingClientRect();
 		const gridSize = pixelBoard.size;
@@ -158,16 +159,22 @@ const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange }, ref) => {
 		const pixelY = Math.floor(transformedY / pixelSize);
 
 		if (pixelX >= 0 && pixelX < gridSize && pixelY >= 0 && pixelY < gridSize) {
-			console.log(`🖌️ Pixel clicked: (${pixelX}, ${pixelY}) - Color: ${selectedColor}`);
 			const newPixels = [...pixels];
 			const existingPixel = newPixels.find(p => p.x === pixelX && p.y === pixelY);
 			if (existingPixel) {
 				existingPixel.color = selectedColor;
 			} else {
-				newPixels.push({ x: pixelX, y: pixelY, color: selectedColor });
+				newPixels.push({x: pixelX, y: pixelY, color: selectedColor});
 			}
 			setPixels(newPixels);
-			onPixelColorChange?.({ x: pixelX, y: pixelY, color: selectedColor });
+			onPixelColorChange?.({x: pixelX, y: pixelY, color: selectedColor});
+			await axios.post("http://localhost:8000/api/pixels", {
+				boardId: pixelBoard._id,
+				x: pixelX,
+				y: pixelY,
+				color: selectedColor,
+				userId: user?._id,
+			});
 		}
 	};
 
