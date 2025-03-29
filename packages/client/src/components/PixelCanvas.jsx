@@ -1,7 +1,10 @@
 import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } from "react";
 
-const PixelCanvas = forwardRef(({ pixelBoard, pixels }, ref) => {
-    const canvasRef = useRef(null);
+const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange }, ref) => {
+	const colors = ["#FF5733", "#33FF57", "#3357FF", "#FFFF33", "#FF33FF", "#33FFFF", "#000000", "#FFFFFF"];
+	const [selectedColor, setSelectedColor] = useState(colors[0]);
+	const [pixels, setPixels] = useState([]);
+	 const canvasRef = useRef(null);
     const [scale, setScale] = useState(1);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
     const [hoveredPixel, setHoveredPixel] = useState(null);
@@ -105,7 +108,7 @@ const PixelCanvas = forwardRef(({ pixelBoard, pixels }, ref) => {
             ctx.globalAlpha = hoverOpacity; // Opacité animée
             ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
             ctx.shadowColor = "rgba(255, 255, 255, 0.8)";
-            ctx.shadowBlur = 8; // Ajout d’un glow 
+            ctx.shadowBlur = 8; // Ajout d’un glow
 
             // Effet hover avec scaling progressif
             ctx.fillRect(
@@ -140,13 +143,33 @@ const PixelCanvas = forwardRef(({ pixelBoard, pixels }, ref) => {
         };
     }, [scale]);
 
-    // Gestion du panning et du hover
-    const handleMouseDown = (e) => {
-        isDraggingRef.current = true;
-        lastMousePosRef.current = { x: e.clientX, y: e.clientY };
-        setHoveredPixel(null);
-        animateHover(0); // Réduire progressivement l'effet hover
-    };
+	// Handle mouse dragging and hovering
+	const handleMouseDown = (e) => {
+		const canvas = canvasRef.current;
+		const rect = canvas.getBoundingClientRect();
+		const gridSize = pixelBoard.size;
+		const boardDimension = Math.min(canvas.width, canvas.height);
+		const pixelSize = boardDimension / gridSize;
+		const mouseX = e.clientX - rect.left;
+		const mouseY = e.clientY - rect.top;
+		const transformedX = (mouseX - offset.x) / scale;
+		const transformedY = (mouseY - offset.y) / scale;
+		const pixelX = Math.floor(transformedX / pixelSize);
+		const pixelY = Math.floor(transformedY / pixelSize);
+
+		if (pixelX >= 0 && pixelX < gridSize && pixelY >= 0 && pixelY < gridSize) {
+			console.log(`🖌️ Pixel clicked: (${pixelX}, ${pixelY}) - Color: ${selectedColor}`);
+			const newPixels = [...pixels];
+			const existingPixel = newPixels.find(p => p.x === pixelX && p.y === pixelY);
+			if (existingPixel) {
+				existingPixel.color = selectedColor;
+			} else {
+				newPixels.push({ x: pixelX, y: pixelY, color: selectedColor });
+			}
+			setPixels(newPixels);
+			onPixelColorChange?.({ x: pixelX, y: pixelY, color: selectedColor });
+		}
+	};
 
     const handleMouseMove = (e) => {
         const canvas = canvasRef.current;
@@ -199,16 +222,34 @@ const PixelCanvas = forwardRef(({ pixelBoard, pixels }, ref) => {
         centerCanvas();
     }, [pixelBoard]);
 
-    return (
-        <canvas
-            ref={canvasRef}
-            className="absolute top-0 left-0"
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseLeave}
-        />
-    );
+	return (
+		<>
+			<div className="absolute top-0 left-0">
+				<div className="">
+					{colors.map((color) => (
+						<button
+							key={color}
+							className=""
+							style={{
+								backgroundColor: color,
+								borderColor: selectedColor === color ? "#000" : "transparent",
+								transform: selectedColor === color ? "scale(1.15)" : "scale(1)"
+							}}
+							onClick={() => setSelectedColor(color)}
+						/>
+					))}
+				</div>
+			</div>
+			<canvas
+				ref={canvasRef}
+				className="absolute top-0 left-0"
+				onMouseDown={handleMouseDown}
+				onMouseMove={handleMouseMove}
+				onMouseUp={handleMouseUp}
+				onMouseLeave={handleMouseLeave}
+			/>
+		</>
+	);
 });
 
 export default PixelCanvas;
