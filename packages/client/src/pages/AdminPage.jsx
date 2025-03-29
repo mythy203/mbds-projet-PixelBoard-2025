@@ -1,3 +1,4 @@
+// AdminPage.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "../styles/AdminPage.module.css";
@@ -23,6 +24,7 @@ const AdminPage = () => {
   const [filterTitle, setFilterTitle] = useState("");
   const [filterMinSize, setFilterMinSize] = useState(0);
   const [filterMaxSize, setFilterMaxSize] = useState(Infinity);
+  const [filterStatus, setFilterStatus] = useState("all");
 
   const navigate = useNavigate();
 
@@ -54,8 +56,11 @@ const AdminPage = () => {
     }
   };
 
-  const boardsEnCours = sortBoards(
-    filterBoards(pixelBoards.filter(b => b.status === "en cours"), {
+  const filteredBoards = sortBoards(
+    filterBoards(pixelBoards.filter(b => {
+      if (filterStatus === "all") return true;
+      return b.status === filterStatus;
+    }), {
       title: filterTitle,
       minSize: filterMinSize,
       maxSize: filterMaxSize
@@ -64,19 +69,21 @@ const AdminPage = () => {
     sortOrder
   );
 
-  const boardsTermines = sortBoards(
-    filterBoards(pixelBoards.filter(b => b.status === "terminée"), {
-      title: filterTitle,
-      minSize: filterMinSize,
-      maxSize: filterMaxSize
-    }),
-    sortKey,
-    sortOrder
-  );
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "—";
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("fr-FR", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   const renderBoards = (boards) => (
     <div className={styles.grid}>
-      {boards.map(board => (
+      {boards.map((board) => (
         <div key={board._id} className={styles.card}>
           <div className={styles.cardActions}>
             <button
@@ -94,10 +101,18 @@ const AdminPage = () => {
               🗑️
             </button>
           </div>
+
           <Link to={`/pixelboard/${board._id}`} className={styles.cardContent}>
             <h4>{board.title}</h4>
-            <p>Status : <strong>{board.status}</strong></p>
-            <p>Dimensions : {board.size} x {board.size}</p>
+            <p>
+              <strong>Statut :</strong>{" "}
+              <span className={`${styles.badge} ${styles[board.status.replace(" ", "_")]}`}>
+                {board.status}
+              </span>
+            </p>
+            <p><strong>Dimensions :</strong> {board.size} x {board.size}</p>
+            <p><strong>Créé le :</strong> {formatDate(board.createdAt)}</p>
+            <p><strong>Fin prévue :</strong> {formatDate(board.endTime)}</p>
           </Link>
         </div>
       ))}
@@ -141,16 +156,13 @@ const AdminPage = () => {
           setFilterMinSize={setFilterMinSize}
           filterMaxSize={filterMaxSize}
           setFilterMaxSize={setFilterMaxSize}
+          filterStatus={filterStatus}
+          setFilterStatus={setFilterStatus}
         />
 
         <section className={styles.section}>
-          <h3>🟢 En cours de création</h3>
-          {boardsEnCours.length > 0 ? renderBoards(boardsEnCours) : <p>Aucun PixelBoard en cours.</p>}
-        </section>
-
-        <section className={styles.section}>
-          <h3>🔒 PixelBoards terminés</h3>
-          {boardsTermines.length > 0 ? renderBoards(boardsTermines) : <p>Aucun PixelBoard terminé.</p>}
+          <h3>🎨 PixelBoards</h3>
+          {filteredBoards.length > 0 ? renderBoards(filteredBoards) : <p>Aucun PixelBoard trouvé.</p>}
         </section>
 
         {editBoard && (
