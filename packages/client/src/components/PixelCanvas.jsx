@@ -1,5 +1,11 @@
 import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } from "react";
 import axios from "axios";
+import {enums} from "../Enums/enums.js";
+import FlashMessage from 'react-flash-message';
+import { createRoot } from 'react-dom/client';
+import styles from "../styles/PixelCanvas.module.css";
+
+
 
 const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange, user }, ref) => {
 	const colors = ["#FF5733", "#33FF57", "#3357FF", "#FFFF33", "#FF33FF", "#33FFFF", "#000000", "#FFFFFF"];
@@ -178,12 +184,19 @@ const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange, user }, ref) =
 					newPixels.push({x: pixelX, y: pixelY, color: selectedColor});
 				}
 
-				// On effectue l'appel axios une seule fois
-				await axios.post("http://localhost:8000/api/pixels", pixelData);
+				let res = await axios.post("http://localhost:8000/api/pixels", pixelData);
+				if (res.data.error !== enums.PixelStatus.DELAY_NOT_RESPECTED) {
+					setPixels(newPixels);
+				} else {
+					const flashMessageContainer = document.getElementById('flash-message');
+					const root = createRoot(flashMessageContainer);
+					root.render(
+						<FlashMessage duration={5000}>
+							<p>{res.data.message}</p>
+						</FlashMessage>
+					);
+				}
 			}
-
-			setPixels(newPixels);
-
 		}
 	};
 
@@ -245,18 +258,15 @@ const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange, user }, ref) =
 	}, [pixelBoard._id]);
 
 	return (
-		<>
+		<div className={styles.canvasContainer}>
+			<div id="flash-message" className={styles.flashMessage}></div>
 			<div className="absolute top-0 left-0">
 				<div className="">
 					{colors.map((color) => (
 						<button
 							key={color}
-							className=""
-							style={{
-								backgroundColor: color,
-								borderColor: selectedColor === color ? "#000" : "transparent",
-								transform: selectedColor === color ? "scale(1.15)" : "scale(1)"
-							}}
+							className={`${styles.colorButton} ${selectedColor === color ? styles.colorButtonSelected : ""}`}
+							style={{ backgroundColor: color }}
 							onClick={() => setSelectedColor(color)}
 						/>
 					))}
@@ -270,7 +280,7 @@ const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange, user }, ref) =
 				onMouseUp={handleMouseUp}
 				onMouseLeave={handleMouseLeave}
 			/>
-		</>
+		</div>
 	);
 });
 

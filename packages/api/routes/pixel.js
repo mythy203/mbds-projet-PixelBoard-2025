@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const Pixel = require('../models/pixel');
 
 const router = express.Router();
+const { enums } = require('../Enums/enums');
 
 //Récupérer tous les pixels d'un PixelBoard
 router.get('/:boardId', async (req, res) => {
@@ -28,7 +29,7 @@ router.post('/', async (req, res) => {
             const timeDiff = (now - lastPixel.createdAt) / 1000; // Différence en secondes
 
             if (timeDiff < 10) { // 10 secondes d'attente
-                return res.status(400).json({ message: `Attendez ${10 - timeDiff} secondes avant d'ajouter un pixel.` });
+                return res.status(200).json({ error: enums.PixelStatus.DELAY_NOT_RESPECTED, message: `Attendez ${10 - timeDiff} secondes avant d'ajouter un pixel.` });
             }
         }
 
