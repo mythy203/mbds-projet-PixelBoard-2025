@@ -12,6 +12,8 @@ const SortControls = ({
   setFilterMinSize,
   filterMaxSize,
   setFilterMaxSize,
+  filterStatus,
+  setFilterStatus,
 }) => {
   return (
     <div className={styles.sortControls}>
@@ -55,6 +57,15 @@ const SortControls = ({
           onChange={(e) => setFilterMaxSize(Number(e.target.value))}
           min={0}
         />
+      </label>
+
+      <label>
+        Statut :
+        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+          <option value="all">Tous</option>
+          <option value="en cours">En cours</option>
+          <option value="terminée">Terminée</option>
+        </select>
       </label>
     </div>
   );

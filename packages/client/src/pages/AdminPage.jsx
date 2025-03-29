@@ -23,6 +23,7 @@ const AdminPage = () => {
   const [filterTitle, setFilterTitle] = useState("");
   const [filterMinSize, setFilterMinSize] = useState(0);
   const [filterMaxSize, setFilterMaxSize] = useState(Infinity);
+  const [filterStatus, setFilterStatus] = useState("all");
 
   const navigate = useNavigate();
 
@@ -54,18 +55,11 @@ const AdminPage = () => {
     }
   };
 
-  const boardsEnCours = sortBoards(
-    filterBoards(pixelBoards.filter(b => b.status === "en cours"), {
-      title: filterTitle,
-      minSize: filterMinSize,
-      maxSize: filterMaxSize
-    }),
-    sortKey,
-    sortOrder
-  );
-
-  const boardsTermines = sortBoards(
-    filterBoards(pixelBoards.filter(b => b.status === "terminée"), {
+  const filteredBoards = sortBoards(
+    filterBoards(pixelBoards.filter(b => {
+      if (filterStatus === "all") return true;
+      return b.status === filterStatus;
+    }), {
       title: filterTitle,
       minSize: filterMinSize,
       maxSize: filterMaxSize
@@ -96,7 +90,12 @@ const AdminPage = () => {
           </div>
           <Link to={`/pixelboard/${board._id}`} className={styles.cardContent}>
             <h4>{board.title}</h4>
-            <p>Status : <strong>{board.status}</strong></p>
+            <p>
+              Statut :{" "}
+              <span className={`${styles.badge} ${styles[board.status.replace(" ", "_")]}`}>
+                {board.status}
+              </span>
+            </p>
             <p>Dimensions : {board.size} x {board.size}</p>
           </Link>
         </div>
@@ -141,16 +140,13 @@ const AdminPage = () => {
           setFilterMinSize={setFilterMinSize}
           filterMaxSize={filterMaxSize}
           setFilterMaxSize={setFilterMaxSize}
+          filterStatus={filterStatus}
+          setFilterStatus={setFilterStatus}
         />
 
         <section className={styles.section}>
-          <h3>🟢 En cours de création</h3>
-          {boardsEnCours.length > 0 ? renderBoards(boardsEnCours) : <p>Aucun PixelBoard en cours.</p>}
-        </section>
-
-        <section className={styles.section}>
-          <h3>🔒 PixelBoards terminés</h3>
-          {boardsTermines.length > 0 ? renderBoards(boardsTermines) : <p>Aucun PixelBoard terminé.</p>}
+          <h3>🎨 PixelBoards</h3>
+          {filteredBoards.length > 0 ? renderBoards(filteredBoards) : <p>Aucun PixelBoard trouvé.</p>}
         </section>
 
         {editBoard && (

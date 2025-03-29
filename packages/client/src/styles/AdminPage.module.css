@@ -135,3 +135,20 @@
     margin: 1rem 0;
   }
   
+  .badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: bold;
+    color: white;
+    display: inline-block;
+  }
+  
+  .en_cours {
+    background-color: #00c853; /* vert */
+  }
+  
+  .terminée {
+    background-color: #d50000; /* rouge */
+  }
+  
