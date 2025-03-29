@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Pixel = require('../models/pixel');
+const PixelBoard = require('../models/pixelBoard');
 
 const router = express.Router();
 const { enums } = require('../Enums/enums');
@@ -20,6 +21,8 @@ router.get('/:boardId', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const { boardId, x, y, color, userId } = req.body;
+		const board = await PixelBoard.findById(boardId);
+		const delayBetweenPixels = board.get('delayBetweenPixels');
 
         // Vérifier le délai entre les actions
         const lastPixel = await Pixel.findOne({ userId, boardId }).sort({ createdAt: -1 });
@@ -28,8 +31,8 @@ router.post('/', async (req, res) => {
             const now = new Date();
             const timeDiff = (now - lastPixel.createdAt) / 1000; // Différence en secondes
 
-            if (timeDiff < 10) { // 10 secondes d'attente
-                return res.status(200).json({ error: enums.PixelStatus.DELAY_NOT_RESPECTED, message: `Attendez ${10 - timeDiff} secondes avant d'ajouter un pixel.` });
+            if (timeDiff < delayBetweenPixels) {
+                return res.status(200).json({ error: enums.PixelStatus.DELAY_NOT_RESPECTED, message: `Attendez ${delayBetweenPixels - timeDiff} secondes avant de dessiner à nouveau` });
             }
         }
 
