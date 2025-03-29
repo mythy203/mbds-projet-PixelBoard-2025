@@ -161,20 +161,29 @@ const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange, user }, ref) =
 		if (pixelX >= 0 && pixelX < gridSize && pixelY >= 0 && pixelY < gridSize) {
 			const newPixels = [...pixels];
 			const existingPixel = newPixels.find(p => p.x === pixelX && p.y === pixelY);
-			if (existingPixel) {
-				existingPixel.color = selectedColor;
-			} else {
-				newPixels.push({x: pixelX, y: pixelY, color: selectedColor});
-			}
-			setPixels(newPixels);
-			onPixelColorChange?.({x: pixelX, y: pixelY, color: selectedColor});
-			await axios.post("http://localhost:8000/api/pixels", {
+			let pixelData = {
 				boardId: pixelBoard._id,
 				x: pixelX,
 				y: pixelY,
 				color: selectedColor,
 				userId: user?._id,
-			});
+			};
+
+			if (existingPixel && !pixelBoard.mode) {
+				// Si existingPixel existe et que pixelBoard.mode est false, on ne fait rien.
+			} else {
+				if (existingPixel && pixelBoard.mode) {
+					existingPixel.color = selectedColor;
+				} else {
+					newPixels.push({x: pixelX, y: pixelY, color: selectedColor});
+				}
+
+				// On effectue l'appel axios une seule fois
+				await axios.post("http://localhost:8000/api/pixels", pixelData);
+			}
+
+			setPixels(newPixels);
+
 		}
 	};
 
