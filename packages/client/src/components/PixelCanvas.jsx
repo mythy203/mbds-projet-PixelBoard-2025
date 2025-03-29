@@ -174,9 +174,14 @@ const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange, user }, ref) =
 				color: selectedColor,
 				userId: user?._id,
 			};
-
+			const flashMessageContainer = document.getElementById('flash-message');
+			const root = createRoot(flashMessageContainer);
 			if (existingPixel && !pixelBoard.mode) {
-				// Si existingPixel existe et que pixelBoard.mode est false, on ne fait rien.
+				root.render(
+					<FlashMessage duration={5000}>
+						<p>Vous ne pouvez pas écraser un pixel existant.</p>
+					</FlashMessage>
+				);
 			} else {
 				if (existingPixel && pixelBoard.mode) {
 					existingPixel.color = selectedColor;
@@ -188,7 +193,6 @@ const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange, user }, ref) =
 				if (res.data.error !== enums.PixelStatus.DELAY_NOT_RESPECTED) {
 					setPixels(newPixels);
 				} else {
-					const flashMessageContainer = document.getElementById('flash-message');
 					const root = createRoot(flashMessageContainer);
 					root.render(
 						<FlashMessage duration={5000}>
