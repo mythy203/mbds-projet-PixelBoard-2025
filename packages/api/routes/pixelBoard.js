@@ -100,5 +100,26 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la suppression du PixelBoard', error });
   }
 });
+// Export PNG 
+router.get('/:id/export', async (req, res) => {
+  try {
+    const board = await PixelBoard.findById(req.params.id);
+    if (!board) {
+      return res.status(404).json({ message: "PixelBoard non trouvé" });
+    }
 
+    const pixels = await Pixel.find({ boardId: board._id });
+    const imageBase64 = await generatePreviewImage(board.size, pixels);
+
+    const base64Data = imageBase64.replace(/^data:image\/png;base64,/, '');
+    const buffer = Buffer.from(base64Data, 'base64');
+
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Content-Disposition', `attachment; filename="${board.title || 'pixelboard'}.png"`);
+    res.send(buffer);
+  } catch (error) {
+    console.error("Erreur export:", error);
+    res.status(500).json({ message: "Erreur export", error });
+  }
+});
 module.exports = router;

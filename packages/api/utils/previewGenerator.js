@@ -1,7 +1,7 @@
 const { createCanvas } = require("canvas");
 
-async function generatePreviewImage(size, pixels) {
-  const canvas = createCanvas(size, size);
+async function generatePreviewImage(size, pixels, scale = 20) {
+  const canvas = createCanvas(size * scale, size * scale);
   const ctx = canvas.getContext("2d");
 
   ctx.fillStyle = "#ffffff";
@@ -9,7 +9,7 @@ async function generatePreviewImage(size, pixels) {
 
   pixels.forEach(pixel => {
     ctx.fillStyle = pixel.color;
-    ctx.fillRect(pixel.x, pixel.y, 1, 1);
+    ctx.fillRect(pixel.x * scale, pixel.y * scale, scale, scale);
   });
 
   return canvas.toDataURL();
