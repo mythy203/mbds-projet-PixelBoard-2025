@@ -4,6 +4,7 @@
 this is a mono-repo project for the 2025 MBDS project PixelBoard. It contains the following packages:
 - `client`: the frontend of the project
 - `api`: the backend of the project
+- `websocket`: the websocket server of the project
 
 You can use this skeleton to start your project.    
 You have to edit the root package.json file : 
@@ -18,7 +19,7 @@ yarn
 ```
 
 ## Usage
-To start the project, you need to run the following commands in the root directory of the project (in two separate terminals):
+To start the project, you need to run the following commands in the root directory of the project (in three separate terminals):
 ``` js
 yarn start:client 
 ```
@@ -29,6 +30,10 @@ yarn start:api
 ```
 *call start script in ./packages/api package.json (to start the api)*
 
+``` js
+yarn start:wss
+```
+*call start script in ./packages/websocket package.json (to start the websocket server)*
 
 ## Adding libraries
 
