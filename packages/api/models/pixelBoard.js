@@ -8,7 +8,8 @@ const PixelBoardSchema = new mongoose.Schema({
     status: { type: String, enum: ["en cours", "terminée"], default: "en cours" },
     createdAt: { type: Date, default: Date.now },
     endTime: { type: Date }, // Date de fermeture du board
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true } // ID de l'utilisateur qui crée le PixelBoard
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // ID de l'utilisateur qui crée le PixelBoard
+    preview: { type: String }
 });
 
 module.exports = mongoose.model("PixelBoard", PixelBoardSchema);

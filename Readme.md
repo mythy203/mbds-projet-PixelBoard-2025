@@ -50,6 +50,8 @@ Nos étapes
 
 1. docker 
 ``` js
+docker-compose down -v
+
 docker-compose up -d
 ```
 2. add url dans mongo compass

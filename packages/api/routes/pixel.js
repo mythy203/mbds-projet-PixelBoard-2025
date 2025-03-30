@@ -2,11 +2,33 @@ const express = require('express');
 const mongoose = require('mongoose');
 const Pixel = require('../models/pixel');
 const PixelBoard = require('../models/pixelBoard');
+const { createCanvas } = require('canvas');
 
 const router = express.Router();
 const { enums } = require('../Enums/enums');
 
-//Récupérer tous les pixels d'un PixelBoard
+// Helper generate preview
+async function generatePreview(boardId, size) {
+    const pixels = await Pixel.find({ boardId });
+  
+    const canvas = createCanvas(size, size);
+    const ctx = canvas.getContext('2d');
+  
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, size, size);
+  
+    pixels.forEach(({ x, y, color }) => {
+      ctx.fillStyle = color || '#000';
+      ctx.fillRect(x, y, 1, 1);
+    });
+  
+    const scaleCanvas = createCanvas(200, 200);
+    const scaleCtx = scaleCanvas.getContext('2d');
+    scaleCtx.imageSmoothingEnabled = false;
+    scaleCtx.drawImage(canvas, 0, 0, 200, 200);
+  
+    return scaleCanvas.toDataURL(); 
+  }
 router.get('/:boardId', async (req, res) => {
     try {
         const { boardId } = req.params;
@@ -39,6 +61,10 @@ router.post('/', async (req, res) => {
         // Ajouter le nouveau pixel
         const newPixel = new Pixel({ boardId, x, y, color, createdAt: new Date(), userId });
         await newPixel.save();
+
+            // Generate preview and update PixelBoard
+        const previewBase64 = await generatePreview(boardId, board.size);
+        await PixelBoard.findByIdAndUpdate(boardId, { preview: previewBase64 });
 
         res.status(201).json(newPixel);
     } catch (error) {
