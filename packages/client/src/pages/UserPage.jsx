@@ -45,6 +45,24 @@ const UserPage = () => {
     }
   };
 
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const updates = {
+      username: formData.get("username"),
+      password: formData.get("password"),
+    };
+
+    try {
+      await axios.put(`http://localhost:8000/api/users/${user._id}`, updates);
+      alert("Profil mis à jour !");
+      window.location.reload();
+    } catch (err) {
+      console.error("Erreur lors de la mise à jour :", err);
+      alert("Erreur lors de la mise à jour du profil.");
+    }
+  };
+
   return (
     <>
       <Header user={user} onLogout={handleLogout} />
@@ -55,6 +73,31 @@ const UserPage = () => {
             <h2>👤 Bonjour {user?.username}</h2>
             <p>Bienvenue sur votre espace personnel PixelBoard.</p>
           </div>
+
+          {/* Section Modifier le profil AVANT les contributions */}
+          <section className={styles.section}>
+            <h3>🛠 Modifier mon profil</h3>
+            <form onSubmit={handleUpdateProfile}>
+              <div className={styles.formGroup}>
+                <label>Nom d'utilisateur</label>
+                <input
+                  type="text"
+                  name="username"
+                  defaultValue={user?.username}
+                  required
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Nouveau mot de passe</label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Laisser vide pour ne pas changer"
+                />
+              </div>
+              <button type="submit" className={styles.saveButton}>💾 Enregistrer</button>
+            </form>
+          </section>
 
           <section className={styles.section}>
             <h3>📊 Vos contributions</h3>

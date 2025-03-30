@@ -22,22 +22,24 @@ const SortControls = ({
       <div className={styles.sortRow}>
         <label>
           Trier par :
-          <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
-            <option value="title">Titre</option>
-            <option value="size">Taille</option>
-            <option value="createdAt">Date de création</option>
-            <option value="endTime">Date de fin</option>
-          </select>
+          <div className={styles.sortSelectWithButton}>
+            <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
+              <option value="title">Titre</option>
+              <option value="size">Taille</option>
+              <option value="createdAt">Date de création</option>
+              <option value="endTime">Date de fin</option>
+            </select>
+
+            <button
+              type="button"
+              title={sortOrder === "asc" ? "Tri ascendant" : "Tri descendant"}
+              onClick={() => setSortOrder((order) => (order === "asc" ? "desc" : "asc"))}
+              className={styles.sortToggleButton}
+            >
+              {sortOrder === "asc" ? "⬆️" : "⬇️"}
+            </button>
+          </div>
         </label>
-
-        <button
-          type="button"
-          title={sortOrder === "asc" ? "Tri ascendant" : "Tri descendant"}
-          onClick={() => setSortOrder(order => order === "asc" ? "desc" : "asc")}
-        >
-          {sortOrder === "asc" ? "⬆️" : "⬇️"}
-        </button>
-
       </div>
 
       <div className={styles.filtersRow}>
