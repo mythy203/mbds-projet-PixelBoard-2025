@@ -5,14 +5,17 @@ import FlashMessage from "react-flash-message";
 import { createRoot } from "react-dom/client";
 import styles from "../styles/PixelCanvas.module.css";
 
-const PixelCanvas = forwardRef(({ pixelBoard, user, selectedColor }, ref) => {
-    const [pixels, setPixels] = useState([]);
+  const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange, user }, ref) => {
+    const colors = ["#FF5733", "#33FF57", "#3357FF", "#FFFF33", "#FF33FF", "#33FFFF", "#000000", "#FFFFFF"];
+	  const [selectedColor, setSelectedColor] = useState(colors[0]);
+	  const [pixels, setPixels] = useState([]);
     const canvasRef = useRef(null);
     const [scale, setScale] = useState(1);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
     const [hoveredPixel, setHoveredPixel] = useState(null);
     const [hoverOpacity, setHoverOpacity] = useState(0);
     const hoverAnimationRef = useRef(null);
+	  const webSocketRef = useRef(null);
 
     // Références pour le panning
     const isDraggingRef = useRef(false);
@@ -25,10 +28,60 @@ const PixelCanvas = forwardRef(({ pixelBoard, user, selectedColor }, ref) => {
         }
     }));
 
-    // Fonction pour centrer le canvas
-    const centerCanvas = () => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
+	// Configuration et connexion WebSocket
+	useEffect(() => {
+		const wsUrl = `ws://localhost:3000/ws/pixels/${pixelBoard._id}`;
+
+		const ws = new WebSocket(wsUrl);
+
+		ws.onopen = () => {
+			console.log('WebSocket connecté');
+		};
+
+		ws.onmessage = (event) => {
+			try {
+				const message = JSON.parse(event.data);
+				const pixelUpdate = message.data;
+
+						setPixels(prevPixels => {
+							const newPixels = [...prevPixels];
+							const existingPixelIndex = newPixels.findIndex(
+								p => p.x === pixelUpdate.x && p.y === pixelUpdate.y
+							);
+
+							if (existingPixelIndex >= 0) {
+								newPixels[existingPixelIndex] = {
+									...newPixels[existingPixelIndex],
+									color: pixelUpdate.color
+								};
+							} else {
+								// Ajouter un nouveau pixel
+								newPixels.push({
+									x: pixelUpdate.x,
+									y: pixelUpdate.y,
+									color: pixelUpdate.color
+								});
+							}
+
+							return newPixels;
+						});
+			} catch (error) {
+				console.error('Erreur lors du traitement du message WebSocket:', error);
+			}
+		};
+		webSocketRef.current = ws;
+
+		return () => {
+			if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+				ws.close();
+			}
+		};
+	}, [pixelBoard._id]);
+
+	// Fonction pour centrer le canvas
+	const centerCanvas = () => {
+		const canvas = canvasRef.current;
+		if (!canvas) return;
 
         const gridSize = pixelBoard.size;
         const boardDimension = Math.min(window.innerWidth, window.innerHeight);
@@ -145,57 +198,76 @@ const PixelCanvas = forwardRef(({ pixelBoard, user, selectedColor }, ref) => {
             canvas.removeEventListener("wheel", handleWheel);
         };
     }, [scale]);
+    
+    
+const handleMouseDown = async (e) => {
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const gridSize = pixelBoard.size;
+    const boardDimension = Math.min(canvas.width, canvas.height);
+    const pixelSize = boardDimension / gridSize;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const transformedX = (mouseX - offset.x) / scale;
+    const transformedY = (mouseY - offset.y) / scale;
+    const pixelX = Math.floor(transformedX / pixelSize);
+    const pixelY = Math.floor(transformedY / pixelSize);
 
-	// Handle mouse dragging and hovering
-    const handleMouseDown = async (e) => {
-        const canvas = canvasRef.current;
-        const rect = canvas.getBoundingClientRect();
-        const gridSize = pixelBoard.size;
-        const boardDimension = Math.min(canvas.width, canvas.height);
-        const pixelSize = boardDimension / gridSize;
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-        const transformedX = (mouseX - offset.x) / scale;
-        const transformedY = (mouseY - offset.y) / scale;
-        const pixelX = Math.floor(transformedX / pixelSize);
-        const pixelY = Math.floor(transformedY / pixelSize);
-    
-        if (pixelX >= 0 && pixelX < gridSize && pixelY >= 0 && pixelY < gridSize) {
-            const pixelData = {
-                boardId: pixelBoard._id,
-                x: pixelX,
-                y: pixelY,
-                color: selectedColor,
-                userId: user?._id,
-            };
-    
-            const flashMessageContainer = document.getElementById("flash-message");
-            const root = createRoot(flashMessageContainer);
-    
-            try {
-                const res = await axios.post("http://localhost:8000/api/pixels", pixelData);
-    
-                if (res.data.error === enums.PixelStatus.DELAY_NOT_RESPECTED) {
-                    root.render(
-                        <FlashMessage duration={5000}>
-                            <p>{res.data.message}</p>
-                        </FlashMessage>
-                    );
-                    return; 
-                }
-    
-                const updatedPixels = await axios.get(`http://localhost:8000/api/pixels/${pixelBoard._id}`);
-                setPixels(updatedPixels.data);
-            } catch (err) {
+    if (pixelX >= 0 && pixelX < gridSize && pixelY >= 0 && pixelY < gridSize) {
+        const newPixels = [...pixels];
+        const existingPixel = newPixels.find(p => p.x === pixelX && p.y === pixelY);
+        const pixelData = {
+            boardId: pixelBoard._id,
+            x: pixelX,
+            y: pixelY,
+            color: selectedColor,
+            userId: user?._id,
+        };
+
+        const flashMessageContainer = document.getElementById("flash-message");
+        const root = createRoot(flashMessageContainer);
+
+        if (existingPixel && !pixelBoard.mode) {
+            root.render(
+                <FlashMessage duration={5000}>
+                    <p>Vous ne pouvez pas écraser un pixel existant.</p>
+                </FlashMessage>
+            );
+            return;
+        }
+
+        try {
+            const res = await axios.post("http://localhost:8000/api/pixels", pixelData);
+
+            if (res.data.error === enums.PixelStatus.DELAY_NOT_RESPECTED) {
                 root.render(
                     <FlashMessage duration={5000}>
-                        <p>Erreur lors de l'envoi du pixel.</p>
+                        <p>{res.data.message}</p>
                     </FlashMessage>
                 );
+                return;
             }
+
+            // Envoi du pixel via WebSocket
+            if (webSocketRef.current && webSocketRef.current.readyState === WebSocket.OPEN) {
+                const wsMessage = {
+                    data: pixelData
+                };
+                webSocketRef.current.send(JSON.stringify(wsMessage));
+            }
+
+            // Mise à jour de l'état avec les nouveaux pixels
+            const updatedPixels = await axios.get(`http://localhost:8000/api/pixels/${pixelBoard._id}`);
+            setPixels(updatedPixels.data);
+        } catch (err) {
+            root.render(
+                <FlashMessage duration={5000}>
+                    <p>Erreur lors de l'envoi du pixel.</p>
+                </FlashMessage>
+            );
         }
-    };
-    
+    }
+};
 
     const handleMouseMove = (e) => {
         const canvas = canvasRef.current;
