@@ -63,14 +63,26 @@ const UserPage = () => {
             </div>
 
             {contributions.length > 0 ? (
-              <ul className={styles.list}>
+              <div className={styles.cardsGrid}>
                 {contributions.map((c, index) => (
-                  <li key={index} className={styles.listItem}>
-                    <span className={styles.boardName}>{c.board}</span>
-                    <span className={styles.pixelCount}>{c.count} pixel{c.count > 1 ? "s" : ""}</span>
-                  </li>
+                  <div key={index} className={styles.contributionCard}>
+                    <div className={styles.cardHeader}>
+                      <h4 className={styles.boardTitle}>{c.board?.title || c.board}</h4>
+                      <span className={styles.pixelBadge}>
+                        {c.count} pixel{c.count > 1 ? "s" : ""}
+                      </span>
+                    </div>
+                    {c.board?._id && (
+                      <button
+                        className={styles.viewButton}
+                        onClick={() => navigate(`/pixelboard/${c.board._id}`)}
+                      >
+                        Voir le PixelBoard
+                      </button>
+                    )}
+                  </div>
                 ))}
-              </ul>
+              </div>
             ) : (
               <p className={styles.empty}>Vous n'avez encore ajouté aucun pixel.</p>
             )}

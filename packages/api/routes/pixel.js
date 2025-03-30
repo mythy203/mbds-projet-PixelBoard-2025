@@ -74,35 +74,44 @@ router.post('/', async (req, res) => {
 
 // GET /pixels/user/:userId - Contributions de l'utilisateur
 router.get('/user/:userId', async (req, res) => {
-    try {
-      const { userId } = req.params;
-  
-      // Trouver tous les pixels créés par l'utilisateur
-      const pixels = await Pixel.find({ userId }).populate('boardId', 'title');
-  
-      // Grouper les pixels par PixelBoard
-      const contributionsMap = {};
-      for (const pixel of pixels) {
-        const boardTitle = pixel.boardId?.title || "Inconnu";
-        if (!contributionsMap[boardTitle]) {
-          contributionsMap[boardTitle] = 0;
-        }
-        contributionsMap[boardTitle]++;
+  try {
+    const { userId } = req.params;
+
+    // On récupère tous les pixels de l'utilisateur avec les infos du board
+    const pixels = await Pixel.find({ userId }).populate('boardId', 'title');
+
+    // On groupe les contributions par boardId (utiliser une Map pour garder board et count)
+    const contributionsMap = new Map();
+
+    for (const pixel of pixels) {
+      const board = pixel.boardId;
+      if (!board) continue;
+
+      const existing = contributionsMap.get(board._id.toString());
+      if (existing) {
+        existing.count++;
+      } else {
+        contributionsMap.set(board._id.toString(), {
+          board: {
+            _id: board._id,
+            title: board.title
+          },
+          count: 1
+        });
       }
-  
-      const contributions = Object.entries(contributionsMap).map(([board, count]) => ({
-        board,
-        count,
-      }));
-  
-      res.json({
-        total: pixels.length,
-        contributions,
-      });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
     }
-  });
+
+    const contributions = Array.from(contributionsMap.values());
+
+    res.json({
+      total: pixels.length,
+      contributions
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
   
 
 module.exports = router;
