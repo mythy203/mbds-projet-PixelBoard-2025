@@ -16,6 +16,8 @@ const PixelBoardPage = () => {
   const [selectedColor, setSelectedColor] = useState("#FF5733");
   const canvasRef = useRef();
   const navigate = useNavigate();
+  const selectedColorRef = useRef(selectedColor);
+
 
   const colors = [
     "#FF5733", "#33FF57", "#3357FF",
@@ -87,7 +89,10 @@ const PixelBoardPage = () => {
             {colors.map(color => (
               <button
                 key={color}
-                onClick={() => setSelectedColor(color)}
+                onClick={() => {
+                  setSelectedColor(color);
+                  selectedColorRef.current = color;
+                }}
                 className={styles.colorButton}
                 style={{
                   backgroundColor: color,

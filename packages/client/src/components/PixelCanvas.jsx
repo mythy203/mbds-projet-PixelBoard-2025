@@ -5,9 +5,8 @@ import FlashMessage from "react-flash-message";
 import { createRoot } from "react-dom/client";
 import styles from "../styles/PixelCanvas.module.css";
 
-  const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange, user }, ref) => {
+  const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange, user,selectedColor}, ref) => {
     const colors = ["#FF5733", "#33FF57", "#3357FF", "#FFFF33", "#FF33FF", "#33FFFF", "#000000", "#FFFFFF"];
-	  const [selectedColor, setSelectedColor] = useState(colors[0]);
 	  const [pixels, setPixels] = useState([]);
     const canvasRef = useRef(null);
     const [scale, setScale] = useState(1);
