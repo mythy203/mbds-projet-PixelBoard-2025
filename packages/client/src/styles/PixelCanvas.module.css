@@ -1,0 +1,28 @@
+.canvasContainer {
+	position: relative;
+	width: 50%;
+	height: 50%;
+}
+
+.colorButton {
+	border: 2px solid transparent;
+	border-radius: 50%;
+	width: 30px;
+	height: 30px;
+	margin: 5px;
+	cursor: pointer;
+	transition: transform 0.2s ease;
+}
+
+.colorButtonSelected {
+	border-color: #000;
+	transform: scale(1.15);
+}
+
+.flashMessage {
+	position: fixed;
+	top: 10%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 1000;
+}

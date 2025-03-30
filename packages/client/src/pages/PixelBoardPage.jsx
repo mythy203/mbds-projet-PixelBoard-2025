@@ -4,23 +4,27 @@ import axios from "axios";
 import PixelCanvas from "../components/PixelCanvas";
 import TitleOverlay from "../components/TitleOverlay";
 import ResetViewButton from "../components/ResetViewButton";
+import { getUserInfo } from "../services/api.js";
 
 const PixelBoardPage = () => {
-  const { id } = useParams();
-  const [pixelBoard, setPixelBoard] = useState(null);
-  const [pixels, setPixels] = useState([]);
-  const [error, setError] = useState("");
-  const canvasRef = useRef();
+	const { id } = useParams();
+	const [pixelBoard, setPixelBoard] = useState(null);
+	const [pixels, setPixels] = useState([]);
+	const [error, setError] = useState("");
+	const [user, setUser] = useState(null);
+	const canvasRef = useRef();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [boardResponse, pixelsResponse] = await Promise.all([
+        const [boardResponse, pixelsResponse, userInfo] = await Promise.all([
           axios.get(`http://localhost:8000/api/pixelboards/${id}`),
-          axios.get(`http://localhost:8000/api/pixels/${id}`)
+          axios.get(`http://localhost:8000/api/pixels/${id}`),
+			await getUserInfo()
         ]);
         setPixelBoard(boardResponse.data);
         setPixels(pixelsResponse.data);
+		setUser(userInfo);
       } catch (err) {
         setError("Erreur lors du chargement du PixelBoard.");
       }
@@ -42,9 +46,9 @@ const PixelBoardPage = () => {
       <TitleOverlay title={pixelBoard.title} />
       <ResetViewButton onReset={handleResetView} />
 
-      <PixelCanvas ref={canvasRef} pixelBoard={pixelBoard} pixels={pixels} />
-    </div>
-  );
+			<PixelCanvas ref={canvasRef} pixelBoard={pixelBoard} pixels={pixels} user={user} />
+		</div>
+	);
 };
 
 export default PixelBoardPage;
