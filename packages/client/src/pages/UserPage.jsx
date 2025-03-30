@@ -1,11 +1,83 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Header from "../components/Header";
+import styles from "../styles/UserPage.module.css";
+import { getUserInfo } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 const UserPage = () => {
+  const [user, setUser] = useState(null);
+  const [contributions, setContributions] = useState([]);
+  const [total, setTotal] = useState(0);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const userInfo = await getUserInfo();
+      if (!userInfo) {
+        navigate("/login");
+      } else {
+        setUser(userInfo);
+        fetchContributions(userInfo._id);
+      }
+    };
+
+    fetchData();
+  }, [navigate]);
+
+  const fetchContributions = async (userId) => {
+    try {
+      const response = await axios.get(`http://localhost:8000/api/pixels/user/${userId}`);
+      setContributions(response.data.contributions);
+      setTotal(response.data.total);
+    } catch (error) {
+      console.error("Erreur lors du chargement des contributions :", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post("http://localhost:8000/api/auth/logout", {}, { withCredentials: true });
+      setUser(null);
+      navigate("/login");
+    } catch (err) {
+      console.error("Erreur de déconnexion :", err);
+    }
+  };
+
   return (
-    <div style={{ padding: "2rem" }}>
-      <h2>Bienvenue utilisateur 👋</h2>
-      <p>Voici votre espace personnel PixelBoard.</p>
-    </div>
+    <>
+      <Header user={user} onLogout={handleLogout} />
+
+      <div className={styles.page}>
+        <main className={styles.content}>
+          <div className={styles.welcomeCard}>
+            <h2>👤 Bonjour {user?.username}</h2>
+            <p>Bienvenue sur votre espace personnel PixelBoard.</p>
+          </div>
+
+          <section className={styles.section}>
+            <h3>📊 Vos contributions</h3>
+            <div className={styles.stats}>
+              <p>Total de pixels ajoutés : <strong>{total}</strong></p>
+            </div>
+
+            {contributions.length > 0 ? (
+              <ul className={styles.list}>
+                {contributions.map((c, index) => (
+                  <li key={index} className={styles.listItem}>
+                    <span className={styles.boardName}>{c.board}</span>
+                    <span className={styles.pixelCount}>{c.count} pixel{c.count > 1 ? "s" : ""}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className={styles.empty}>Vous n'avez encore ajouté aucun pixel.</p>
+            )}
+          </section>
+        </main>
+      </div>
+    </>
   );
 };
 
