@@ -46,4 +46,37 @@ router.post('/', async (req, res) => {
     }
 });
 
+// GET /pixels/user/:userId - Contributions de l'utilisateur
+router.get('/user/:userId', async (req, res) => {
+    try {
+      const { userId } = req.params;
+  
+      // Trouver tous les pixels créés par l'utilisateur
+      const pixels = await Pixel.find({ userId }).populate('boardId', 'title');
+  
+      // Grouper les pixels par PixelBoard
+      const contributionsMap = {};
+      for (const pixel of pixels) {
+        const boardTitle = pixel.boardId?.title || "Inconnu";
+        if (!contributionsMap[boardTitle]) {
+          contributionsMap[boardTitle] = 0;
+        }
+        contributionsMap[boardTitle]++;
+      }
+  
+      const contributions = Object.entries(contributionsMap).map(([board, count]) => ({
+        board,
+        count,
+      }));
+  
+      res.json({
+        total: pixels.length,
+        contributions,
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+
 module.exports = router;
