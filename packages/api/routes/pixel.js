@@ -43,8 +43,16 @@ router.get('/:boardId', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const { boardId, x, y, color, userId } = req.body;
-		const board = await PixelBoard.findById(boardId);
-		const delayBetweenPixels = board.get('delayBetweenPixels');
+        const board = await PixelBoard.findById(boardId);
+        const delayBetweenPixels = board.get('delayBetweenPixels');
+
+        const now = new Date();
+        if (now > board.endTime) {
+            return res.status(403).json({
+                error: enums.PixelStatus.BOARD_ENDED,
+                message: "Ce PixelBoard est terminé. Impossible d'ajouter un pixel."
+            });
+        }
 
         // Vérifier le délai entre les actions
         const lastPixel = await Pixel.findOne({ userId, boardId }).sort({ createdAt: -1 });

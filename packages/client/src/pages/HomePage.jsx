@@ -44,8 +44,11 @@ const HomePage = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const boardsEnCours = pixelBoards.filter(b => b.status === "en cours");
-  const boardsTermines = pixelBoards.filter(b => b.status === "terminée");
+  const now = new Date();
+
+  const boardsEnCours = pixelBoards.filter(b => !b.endTime || new Date(b.endTime) > now);
+  const boardsTermines = pixelBoards.filter(b => b.endTime && new Date(b.endTime) <= now);
+  
 
   const sliderSettings = {
     dots: true,
@@ -129,7 +132,7 @@ const HomePage = () => {
                   <div className={styles.card}>
                     <Link to={`/pixelboard/${board._id}`} className={styles.cardContent}>
                       <h4>{board.title}</h4>
-                      <p>Status : <strong>{board.status}</strong></p>
+                      <p>Status : <strong>{new Date(board.endTime) <= now ? "terminée" : "en cours"}</strong></p>
                       <p>Taille : {board.size} x {board.size}</p>
                       {board.preview && (
                         <img src={board.preview} alt="Aperçu" className={styles.previewImage} />
@@ -153,7 +156,7 @@ const HomePage = () => {
                   <div className={styles.card}>
                     <Link to={`/pixelboard/${board._id}`} className={styles.cardContent}>
                       <h4>{board.title}</h4>
-                      <p>Status : <strong>{board.status}</strong></p>
+                      <p>Status : <strong>{new Date(board.endTime) <= now ? "terminée" : "en cours"}</strong></p>
                       <p>Taille : {board.size} x {board.size}</p>
                       {board.preview && (
                         <img src={board.preview} alt="Aperçu" className={styles.previewImage} />

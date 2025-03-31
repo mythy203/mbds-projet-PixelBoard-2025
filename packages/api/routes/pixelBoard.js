@@ -33,6 +33,10 @@ router.get('/:id', async (req, res) => {
     if (!board) {
       return res.status(404).json({ message: 'PixelBoard non trouvé' });
     }
+    if (new Date() > board.endTime && board.status !== "terminée") {
+      board.status = "terminée";
+      await board.save();
+    }
     res.json(board);
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la récupération du PixelBoard', error });

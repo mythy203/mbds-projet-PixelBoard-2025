@@ -59,7 +59,7 @@ const AdminPage = () => {
   const filteredBoards = sortBoards(
     filterBoards(pixelBoards.filter(b => {
       if (filterStatus === "all") return true;
-      return b.status === filterStatus;
+      return getDynamicStatus(b) === filterStatus;
     }), {
       title: filterTitle,
       minSize: filterMinSize,
@@ -80,6 +80,12 @@ const AdminPage = () => {
       minute: "2-digit",
     });
   };
+  const getDynamicStatus = (board) => {
+    if (!board.endTime) return "en cours";
+    const now = new Date();
+    return new Date(board.endTime) <= now ? "terminée" : "en cours";
+  };
+
 
   const renderBoards = (boards) => (
     <div className={styles.grid}>
@@ -106,9 +112,10 @@ const AdminPage = () => {
             <h4>{board.title}</h4>
             <p>
               <strong>Statut :</strong>{" "}
-              <span className={`${styles.badge} ${styles[board.status.replace(" ", "_")]}`}>
-                {board.status}
+              <span className={`${styles.badge} ${styles[getDynamicStatus(board).replace(" ", "_")]}`}>
+                {getDynamicStatus(board)}
               </span>
+
             </p>
             <p><strong>Dimensions :</strong> {board.size} x {board.size}</p>
             <p><strong>Créé le :</strong> {formatDate(board.createdAt)}</p>
@@ -157,7 +164,6 @@ const AdminPage = () => {
           filterMaxSize={filterMaxSize}
           setFilterMaxSize={setFilterMaxSize}
           filterStatus={filterStatus}
-          setFilterStatus={setFilterStatus}
         />
 
         <section className={styles.section}>
