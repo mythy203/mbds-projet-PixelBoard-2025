@@ -17,7 +17,21 @@ To install the project, you need to clone the repository and install the depende
 ``` js
 yarn
 ```
-
+## Docker & MongoDB Setup
+1. Start MongoDB using Docker Compose
+- Stop and remove volumes if needed
+``` js
+docker-compose down -v 
+```
+-  Start services in detached mode
+``` js
+docker-compose up -d 
+```
+2. Access MongoDB via MongoDB Compass (optional)<br>
+You can connect to the database using this URI:
+``` js
+mongodb://admin:password@localhost:27017/pixelboard?authSource=admin
+```
 ## Usage
 To start the project, you need to run the following commands in the root directory of the project (in three separate terminals):
 ``` js
@@ -51,16 +65,14 @@ For example to add a librairy for devDependencies to the client package you can 
 yarn workspace client add -D <package-name>
 ```
 
-Nos étapes
+###  Task Distribution (GROUPE 5)
 
-1. docker 
-``` js
-docker-compose down -v
+| Nom           | Prénom         | GitHub              | Tâches effectuées                           |
+|---------------|----------------|----------------------|----------------------------------------------|
+| **BREZZO**    | Jérémie        | `jeremie-brezzo`     |                                              |
+| **SAMUEL**    | Jonathan       | `jtnsamuel`          |   **Backend** :<br> Modèle de données (users), déconnexion, contributions (pixelboard, nombre total de pixel ajoutés), modifier profil<br>**Frontend** :<br>Page administrateur, page utilisateur, Page home (affichage de la liste des pixelboards)                                          |
+| **WANOUNOU**  | Ilan           | `IlanWanounou`       |                                              |
+| **TRINH**     | Thi Thanh Thuy | `mythy203`           | **Backend** :<br>Configuration MongoDB avec Docker, Modèle de données Pixel et PixelBoard,Génération de l’aperçu (preview) avec canvas pour chaque PixelBoard,  Implantation de la route pour exporter l’image PNG (bonus)<br>**Frontend** :<br>Pages Login/Register, Pages Home, Header, amélioration PixelBoard (Ajout sidebar et bouton Export PNG), Dark/Light mode  |
+| **BOCOUM**    | Allaye         |`allaye35`           |                                               |
 
-docker-compose up -d
-```
-2. add url dans mongo compass
 
-``` js
-mongodb://admin:password@localhost:27017/pixelboard?authSource=admin
-```
