@@ -69,7 +69,7 @@ yarn workspace client add -D <package-name>
 
 | Nom           | Prénom         | GitHub              | Tâches effectuées                           |
 |---------------|----------------|----------------------|----------------------------------------------|
-| **BREZZO**    | Jérémie        | `jeremie-brezzo`     |                                              |
+| **BREZZO**    | Jérémie        | `jeremie-brezzo`     |   **Backend** :<br> API pixels et pixelboard, set up de l'authentification avec JWT<br>**Frontend** :<br>Page PixelBoard, affichage du canva (fonction de zoom, drag, hover                                        |
 | **SAMUEL**    | Jonathan       | `jtnsamuel`          |   **Backend** :<br> Modèle de données (users), déconnexion, contributions (pixelboard, nombre total de pixel ajoutés), modifier profil<br>**Frontend** :<br>Page administrateur, page utilisateur, Page home (affichage de la liste des pixelboards)                                          |
 | **WANOUNOU**  | Ilan           | `IlanWanounou`       |                                              |
 | **TRINH**     | Thi Thanh Thuy | `mythy203`           | **Backend** :<br>Configuration MongoDB avec Docker, Modèle de données Pixel et PixelBoard,Génération de l’aperçu (preview) avec canvas pour chaque PixelBoard,  Implantation de la route pour exporter l’image PNG (bonus)<br>**Frontend** :<br>Pages Login/Register, Pages Home, Header, amélioration PixelBoard (Ajout sidebar et bouton Export PNG), Dark/Light mode  |
