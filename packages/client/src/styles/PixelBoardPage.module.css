@@ -18,9 +18,17 @@
     justify-content: center;
     align-items: center;
     background-color: var(--secondary-bg);
-    overflow: auto;
-    padding: 1rem;
-  }
+    overflow: hidden; /* Empêche le débordement */
+    padding: 0; /* Supprime les marges internes */
+    position: relative; /* Nécessaire pour positionner le canvas */
+}
+
+canvas {
+    width: 100%; /* Le canvas occupe toute la largeur du wrapper */
+    height: 100%; /* Le canvas occupe toute la hauteur du wrapper */
+    display: block; /* Évite les marges indésirables */
+    position: absolute; /* Permet un positionnement précis dans le wrapper */
+}
   
   .sidebar {
     width: 220px;
