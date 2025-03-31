@@ -56,19 +56,7 @@ const AdminPage = () => {
     }
   };
 
-  const filteredBoards = sortBoards(
-    filterBoards(pixelBoards.filter(b => {
-      if (filterStatus === "all") return true;
-      return getDynamicStatus(b) === filterStatus;
-    }), {
-      title: filterTitle,
-      minSize: filterMinSize,
-      maxSize: filterMaxSize
-    }),
-    sortKey,
-    sortOrder
-  );
-
+  // Helper: Format date
   const formatDate = (dateStr) => {
     if (!dateStr) return "—";
     const date = new Date(dateStr);
@@ -80,12 +68,31 @@ const AdminPage = () => {
       minute: "2-digit",
     });
   };
+
+  // Helper: Determine dynamic status
   const getDynamicStatus = (board) => {
     if (!board.endTime) return "en cours";
     const now = new Date();
     return new Date(board.endTime) <= now ? "terminée" : "en cours";
   };
 
+  // ⬇️ Ajoute `dynamicStatus`, puis filtre, puis tri
+  const boardsWithStatus = pixelBoards.map((board) => ({
+    ...board,
+    dynamicStatus: getDynamicStatus(board),
+  }));
+
+  const statusFiltered = boardsWithStatus.filter((board) =>
+    filterStatus === "all" ? true : board.dynamicStatus === filterStatus
+  );
+
+  const fullyFiltered = filterBoards(statusFiltered, {
+    title: filterTitle,
+    minSize: filterMinSize,
+    maxSize: filterMaxSize,
+  });
+
+  const filteredBoards = sortBoards(fullyFiltered, sortKey, sortOrder);
 
   const renderBoards = (boards) => (
     <div className={styles.grid}>
@@ -112,10 +119,9 @@ const AdminPage = () => {
             <h4>{board.title}</h4>
             <p>
               <strong>Statut :</strong>{" "}
-              <span className={`${styles.badge} ${styles[getDynamicStatus(board).replace(" ", "_")]}`}>
-                {getDynamicStatus(board)}
+              <span className={`${styles.badge} ${styles[board.dynamicStatus.replace(" ", "_")]}`}>
+                {board.dynamicStatus}
               </span>
-
             </p>
             <p><strong>Dimensions :</strong> {board.size} x {board.size}</p>
             <p><strong>Créé le :</strong> {formatDate(board.createdAt)}</p>
@@ -164,6 +170,7 @@ const AdminPage = () => {
           filterMaxSize={filterMaxSize}
           setFilterMaxSize={setFilterMaxSize}
           filterStatus={filterStatus}
+          setFilterStatus={setFilterStatus}
         />
 
         <section className={styles.section}>
