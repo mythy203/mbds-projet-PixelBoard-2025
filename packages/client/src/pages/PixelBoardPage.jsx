@@ -14,10 +14,11 @@ const PixelBoardPage = () => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
   const [selectedColor, setSelectedColor] = useState("#FF5733");
+  const [remainingTime, setRemainingTime] = useState("");
+  const [pixelDelay, setPixelDelay] = useState(0);
   const canvasRef = useRef();
   const navigate = useNavigate();
   const selectedColorRef = useRef(selectedColor);
-
 
   const colors = [
     "#FF5733", "#33FF57", "#3357FF",
@@ -42,7 +43,50 @@ const PixelBoardPage = () => {
     };
     fetchData();
   }, [id]);
-  
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (pixelBoard?.endTime) {
+        const now = new Date();
+        const end = new Date(pixelBoard.endTime);
+        const diff = end - now;
+
+        if (diff <= 0) {
+          setRemainingTime("Terminé");
+          clearInterval(interval);
+        } else {
+          const hours = Math.floor(diff / (1000 * 60 * 60));
+          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+          setRemainingTime(`${hours}h ${minutes}m ${seconds}s`);
+        }
+      } else {
+        setRemainingTime("Indéfini");
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [pixelBoard]);
+
+  useEffect(() => {
+    if (pixelDelay <= 0) return;
+
+    const timer = setInterval(() => {
+      setPixelDelay(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [pixelDelay]);
+
+  const handlePixelPlaced = () => {
+    setPixelDelay(pixelBoard.delayBetweenPixels);
+  };
 
   const handleResetView = () => {
     if (canvasRef.current) canvasRef.current.resetView();
@@ -63,14 +107,27 @@ const PixelBoardPage = () => {
             user={user}
             selectedColor={selectedColor}
             onPixelColorChange={(updatedBoard) => setPixelBoard(updatedBoard)}
+            onPixelPlaced={handlePixelPlaced}
           />
         </div>
 
         <div className={styles.sidebar}>
-        <div className={styles.boardTitle}>{pixelBoard.title}</div>
+          <div className={styles.boardTitle}>{pixelBoard.title}</div>
 
           <div className={styles.preview}>
             <img src={pixelBoard.preview} alt="Preview" style={{ width: "100%" }} />
+          </div>
+
+          <div className={styles.properties}>
+            <div><strong>⏳ Temps restant :</strong> {remainingTime}</div>
+            <div><strong>🧮 Taille :</strong> {pixelBoard.size}x{pixelBoard.size}</div>
+            <div>
+              <strong>⏱️ Délai :</strong>{" "}
+              {pixelDelay > 0
+                ? `Attente : ${pixelDelay}s`
+                : `Prêt (délai : ${pixelBoard.delayBetweenPixels}s)`}
+            </div>
+            <div><strong>🎨 Écraser pixel :</strong> {pixelBoard.mode ? "Oui" : "Non"}</div>
           </div>
 
           <button className={styles.button} onClick={handleResetView}>
@@ -92,6 +149,7 @@ const PixelBoardPage = () => {
                 onClick={() => {
                   setSelectedColor(color);
                   selectedColorRef.current = color;
+                  // Ne déclenche plus le délai ici
                 }}
                 className={styles.colorButton}
                 style={{

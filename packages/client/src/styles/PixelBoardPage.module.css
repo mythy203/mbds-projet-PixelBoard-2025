@@ -126,3 +126,15 @@ canvas {
     }
   }
   
+  .properties {
+    font-size: 0.7rem;
+    text-align: left;
+    color: var(--text-color);
+    width: 100%;
+    background-color: var(--secondary-bg);
+    border: 1px dashed var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem;
+    line-height: 1.5;
+  }
+  
