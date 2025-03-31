@@ -7,14 +7,14 @@ import styles from "../styles/PixelCanvas.module.css";
 
   const PixelCanvas = forwardRef(({ pixelBoard, onPixelColorChange, user,selectedColor}, ref) => {
     const colors = ["#FF5733", "#33FF57", "#3357FF", "#FFFF33", "#FF33FF", "#33FFFF", "#000000", "#FFFFFF"];
-	  const [pixels, setPixels] = useState([]);
+	const [pixels, setPixels] = useState([]);
     const canvasRef = useRef(null);
     const [scale, setScale] = useState(1);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
     const [hoveredPixel, setHoveredPixel] = useState(null);
     const [hoverOpacity, setHoverOpacity] = useState(0);
     const hoverAnimationRef = useRef(null);
-	  const webSocketRef = useRef(null);
+	const webSocketRef = useRef(null);
 
     // Références pour le panning
     const isDraggingRef = useRef(false);
@@ -79,6 +79,27 @@ import styles from "../styles/PixelCanvas.module.css";
 		};
 	}, [pixelBoard._id]);
 
+    // Ajouter cette fonction utilitaire dans le composant PixelCanvas
+    const hexToRgba = (hex, alpha = 1) => {
+        // Convertir hex en RGB
+        let r = 0, g = 0, b = 0;
+        
+        // Vérifier le format (avec ou sans #)
+        if (hex.length === 4) {
+            // Format court #RGB
+            r = parseInt(hex[1] + hex[1], 16);
+            g = parseInt(hex[2] + hex[2], 16);
+            b = parseInt(hex[3] + hex[3], 16);
+        } else if (hex.length === 7) {
+            // Format long #RRGGBB
+            r = parseInt(hex.substring(1, 3), 16);
+            g = parseInt(hex.substring(3, 5), 16);
+            b = parseInt(hex.substring(5, 7), 16);
+        }
+        
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    };
+    
 	// Fonction pour centrer le canvas
     const centerCanvas = () => {
         const canvas = canvasRef.current;
@@ -172,11 +193,14 @@ import styles from "../styles/PixelCanvas.module.css";
         if (hoveredPixel) {
             ctx.save();
             const hoverPadding = pixelSize * 0.15; // 15% de padding pour l'effet hover
-            ctx.globalAlpha = hoverOpacity; // Opacité animée
-            ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
-            ctx.shadowColor = "rgba(255, 255, 255, 0.8)";
-            ctx.shadowBlur = 8; // Ajout d’un glow
-
+            
+            // Utiliser la couleur sélectionnée avec une transparence
+            const selectedColorRGB = hexToRgba(selectedColor, hoverOpacity * 0.7);
+            
+            ctx.fillStyle = selectedColorRGB;
+            ctx.shadowColor = selectedColor;
+            ctx.shadowBlur = 8; // Ajout d'un glow
+            
             // Effet hover avec scaling progressif
             ctx.fillRect(
                 hoveredPixel.x * pixelSize - hoverPadding,
@@ -184,8 +208,18 @@ import styles from "../styles/PixelCanvas.module.css";
                 pixelSize + 2 * hoverPadding,
                 pixelSize + 2 * hoverPadding
             );
-
-            ctx.globalAlpha = 1; // Reset de l’opacité
+            
+            // Ajouter un contour pour mieux voir sur les couleurs claires
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.3)";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(
+                hoveredPixel.x * pixelSize,
+                hoveredPixel.y * pixelSize,
+                pixelSize,
+                pixelSize
+            );
+            
+            ctx.globalAlpha = 1; // Reset de l'opacité
             ctx.restore();
         }
         ctx.restore();
@@ -399,6 +433,7 @@ useEffect(() => {
         });
     }, [pixelBoard._id]);
 
+    
     return (
         <div className={styles.canvasContainer}>
             <div id="flash-message" className={styles.flashMessage}></div>
