@@ -80,6 +80,39 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.post('/batch', async (req, res) => {
+  try {
+    const { pixels } = req.body;
+    console.log("Pixels reçus :", pixels); // Log des pixels reçus
+
+    if (!pixels || !Array.isArray(pixels) || pixels.length === 0) {
+      return res.status(400).json({ message: "Le format des données est invalide" });
+    }
+
+    // Valider chaque pixel
+    for (const pixel of pixels) {
+      if (!pixel.boardId || typeof pixel.x !== 'number' || typeof pixel.y !== 'number' || !pixel.color) {
+        return res.status(400).json({ message: "Un ou plusieurs pixels sont mal formatés" });
+      }
+    }
+
+    // Traiter tous les pixels
+    const promises = pixels.map(pixel => {
+      return Pixel.findOneAndUpdate(
+        { boardId: pixel.boardId, x: pixel.x, y: pixel.y },
+        { ...pixel },
+        { upsert: true, new: true }
+      );
+    });
+
+    const results = await Promise.all(promises);
+    res.status(200).json({ message: `${results.length} pixels ont été ajoutés avec succès` });
+  } catch (error) {
+    console.error("Erreur lors du traitement du lot de pixels :", error);
+    res.status(500).json({ message: "Erreur lors du traitement du lot de pixels" });
+  }
+});
+
 // GET /pixels/user/:userId - Contributions de l'utilisateur
 router.get('/user/:userId', async (req, res) => {
   try {
